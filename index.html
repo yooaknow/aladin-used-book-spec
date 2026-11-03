@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>중고책 구매 | 인터랙티브 화면설계서</title>
+  <meta name="description" content="홈 온라인 중고 → 가격 비교 → 상품 상세 → 장바구니로 이어지는 중고책 구매 흐름의 화면설계서·기능명세서 ver1.0과 프로토타입 시연">
+  <link rel="icon" type="image/png" href="assets/aladin-logo.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <a class="brand" href="#/flow" aria-label="전체 흐름 보기">
+        <span class="brand-mark aladin" aria-hidden="true"><img src="assets/aladin-logo.png" alt=""></span>
+        <span class="brand-text">
+          <span class="brand-sub">화면설계서와 기능명세서 <em>ver1.0</em></span>
+          <strong class="brand-title">중고책 구매, 화면에서 명세까지</strong>
+        </span>
+      </a>
+    </div>
+    <nav class="tabs" aria-label="보기 전환">
+      <a href="#/flow" data-tab="flow">전체 흐름 보기</a>
+      <a href="#/doc" data-tab="doc">문서 보기</a>
+      <a href="#/demo" data-tab="demo">시연하기</a>
+    </nav>
+  </header>
+
+  <main id="app" tabindex="-1"></main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
