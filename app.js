@@ -316,8 +316,10 @@
   let demoTimers = [];
   let barIO = null;
 
-  const actText = (a) => ({ go: `→ [${byKey[a.to]?.short ?? ""}] 페이지로 이동`, sheet: "필터 창", cabinet: "보관 완료 알림", toggle: "눌린 모양", tooltip: "Thanks to 설명 말풍선", cartSnack: "담기 완료 알림", noop: "동작하지 않음" }[a.act]);
-  const hotHtml = (a, attr = "data-hot") => `<button type="button" class="hot${state.pressed[a.key] ? " pressed" : ""}" ${attr}="${a.id}" style="left:${a.r[0]}px;top:${a.r[1]}px;width:${a.r[2]}px;height:${a.r[3]}px" aria-label="${esc(a.label)}"></button>`;
+  const actText = (a) => ({ go: `→ [${byKey[a.to]?.short ?? ""}] 페이지로 이동`, sheet: "필터 창", cabinet: "보관 완료 알림", toggle: "눌린 모양", tooltip: "Thanks to 설명 말풍선", cartSnack: "담기 완료 알림" }[a.act]);
+  // 동작하지 않는 곳(noop)은 점선 없이 눌림만 막는다 (카드 안 버튼을 눌러도 카드 이동이 되지 않게)
+  const blockHtml = (a) => `<span class="hot-block" style="left:${a.r[0]}px;top:${a.r[1]}px;width:${a.r[2]}px;height:${a.r[3]}px" aria-hidden="true"></span>`;
+  const hotHtml = (a, attr = "data-hot") => a.act === "noop" ? blockHtml(a) : `<button type="button" class="hot${state.pressed[a.key] ? " pressed" : ""}" ${attr}="${a.id}" style="left:${a.r[0]}px;top:${a.r[1]}px;width:${a.r[2]}px;height:${a.r[3]}px" aria-label="${esc(a.label)}"></button>`;
 
   function renderDemo(key, hl) {
     const s = byKey[key] || byKey.hom;
@@ -343,10 +345,10 @@
       `<button type="button" class="hot" data-sheet="apply" style="left:${sh.apply[0]}px;top:${sh.apply[1]}px;width:${sh.apply[2]}px;height:${sh.apply[3]}px" aria-label="필터 적용하기"></button>`
     ].join("");
 
-    const actionList = acts.map((a) => `<button type="button" class="action" data-pulse="${a.id}"><b>${esc(a.label)}</b><span>${esc(actText(a))}</span>${a.note ? `<small>${esc(a.note)}</small>` : ""}</button>`).join("");
+    const actionList = acts.filter((a) => a.act !== "noop").map((a) => `<button type="button" class="action" data-pulse="${a.id}"><b>${esc(a.label)}</b><span>${esc(actText(a))}</span>${a.note ? `<small>${esc(a.note)}</small>` : ""}</button>`).join("");
     const notes = {
-      crt: ["아래 주문 바: 본문 ‘결제 금액’이 보이면 숨김", "‘주문하기’ 다음의 주문 단계는 피그마에 연결 안 됨"],
-      det: ["아래 구매 바(장바구니·주문하기)는 화면 맨 아래에 붙어 있음", "‘주문하기’·보관 아이콘은 피그마에 연결 안 됨"],
+      crt: ["아래 주문 바: 본문 ‘결제 금액’이 보이면 숨김"],
+      det: ["아래 구매 바(장바구니·주문하기)는 화면 맨 아래에 붙어 있음"],
       hom: [],
       cmp: []
     }[s.key];
@@ -397,7 +399,7 @@
       barIO.observe(document.getElementById("paymark"));
     }
     if (hl) {
-      const targets = acts.filter((a) => a.el === hl);
+      const targets = acts.filter((a) => a.el === hl && a.act !== "noop");
       if (targets.length) pulse(targets[0].id); else focusEl(hl);
     }
   }
@@ -509,11 +511,6 @@
       case "cartSnack":
         showSnack("snackCart", 4500);
         log(`${a.label} → 담기 완료 알림`);
-        break;
-      case "noop":
-        // 눌러도 아무 일 없음 (카드 아래로 눌림이 번져 상세로 넘어가지 않게 이 영역에서 멈춤)
-        toast("동작하지 않음");
-        log(`${a.label} → 동작하지 않음`);
         break;
     }
   }
