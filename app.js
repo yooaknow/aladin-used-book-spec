@@ -191,8 +191,6 @@
       if (f.startsWith("[시연]")) return `<li class="proto"><span class="chip pink sm">시연 흐름</span> ${rich(f.slice(4).trim())}</li>`;
       return `<li>${rich(f)}</li>`;
     };
-    const states = `<tr class="head"><th>상태</th><th>언제</th><th>어떻게 보여주나</th></tr>`
-      + s.states.map(([name, when, how, sug]) => `<tr><th>${esc(name)}${sug ? " " + SUGGEST : ""}</th><td>${esc(when)}</td><td>${list(how)}</td></tr>`).join("");
     return `<section class="card screen" id="${s.id}" data-sc="${s.id}">
       <div class="screen-head">
         <div><h2>${esc(s.name)}${codeTag(s.id)}</h2><p>${esc(s.summary)}</p>
@@ -208,7 +206,6 @@
         <div class="els">
           ${s.els.map((e) => elDoc(s, e)).join("")}
           <div class="box-section"><h3>사용자 이동 경로</h3><ul class="flowlist">${s.flow.map(flowItem).join("")}</ul></div>
-          <div class="box-section"><h3>상태별 화면 (빈 화면·오류·완료)</h3><p class="note" style="margin:0 0 6px">디자인에 아직 없는 화면은 ‘기획 제안’으로 표시</p><div class="card" style="box-shadow:none;overflow-x:auto"><table class="table states">${states}</table></div></div>
           ${extras}
         </div>
       </div>
