@@ -31,15 +31,18 @@
   const rich = (s) => esc(s)
     .replace(/`([^`]+)`/g, '<code class="c">$1</code>')
     .replace(/\[제안\]\s*/g, SUGGEST + " ")
-    .replace(ID_RE, (m) => idLink(m));
+    .replace(ID_RE, (m) => idLink(m))
+    // ‘(피그마 연결)’은 화면에서만 보이고 인쇄에서는 뺀다
+    .replace(/\s*\(피그마 연결\)/g, '<span class="figma-note"> (피그마 연결)</span>');
 
   // 항목 목록: 문자열 하나면 한 줄, 배열이면 개조식 목록. "개발 참고:"로 시작하면 따로 표시
+  // "피그마:"로 시작하는 줄은 화면에서만 보이고 인쇄에서는 뺀다
   const DEV = "개발 참고:";
   function list(items) {
     if (!Array.isArray(items)) return `<p class="one">${rich(items)}</p>`;
     return `<ul class="dots">${items.map((t) => t.startsWith(DEV)
       ? `<li class="dev"><b>개발 참고</b> ${rich(t.slice(DEV.length).trim())}</li>`
-      : `<li>${rich(t)}</li>`).join("")}</ul>`;
+      : `<li${t.startsWith("피그마:") ? ' class="figma-line"' : ""}>${rich(t)}</li>`).join("")}</ul>`;
   }
   // 하단 여백만 유지(문구 없음)
   const footer = () => `<div class="foot" aria-hidden="true"></div>`;
@@ -204,7 +207,7 @@
     return `${tools}<section class="card screen" id="${s.id}" data-sc="${s.id}">
       <div class="screen-head">
         <div><h2>${esc(s.name)}${codeTag(s.id)}</h2><p>${esc(s.summary)}</p>
-          <dl class="meta"><dt>들어오는 곳</dt><dd>${s.entry.map(esc).join(" · ")}</dd><dt>피그마 원본</dt><dd>최종 디자인 ${s.source}</dd></dl></div>
+          <dl class="meta"><dt>들어오는 곳</dt><dd>${s.entry.map(rich).join(" · ")}</dd><dt class="figma-src">피그마 원본</dt><dd class="figma-src">최종 디자인 ${s.source}</dd></dl></div>
       </div>
       ${overview}
       <div class="screen-body">
