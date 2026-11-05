@@ -161,7 +161,7 @@
       return `<dt${a}>${l}</dt><dd${a}>${list(e[k])}</dd>`;
     }).join("");
     return `<article class="el" id="${s.id}-${e.n}" data-sc="${s.id}" data-el="${e.n}" data-st="${elStatus(im)}">
-      <div class="el-head"><div class="el-title"><span class="id">${elTag(s.id, e.n)}</span><h3>${esc(e.name)}</h3>${codeTag(`${s.id}/${e.n}`)}</div><a class="btn small" href="${demoHref(s.key, e.n)}">이 요소 시연</a></div>
+      <div class="el-head"><div class="el-title"><span class="id">${elTag(s.id, e.n)}</span><h3>${esc(e.name)}</h3>${codeTag(`${s.id}/${e.n}`)}</div></div>
       <div class="chips">${e.fns.map((f) => `<span class="chip purple">기능: ${esc(label(f))}</span>`).join("")}${tags.join("")}</div>
       <div class="print-only print-crop">${thumb(s, e.boxes[0], 230, 380)}</div>
       <div class="pair">
@@ -207,7 +207,7 @@
       <div class="screen-head">
         <div><h2>${esc(s.name)}${codeTag(s.id)}</h2><p>${esc(s.summary)}</p>
           <dl class="meta"><dt>들어오는 곳</dt><dd>${s.entry.map(esc).join(" · ")}</dd><dt>피그마 원본</dt><dd>최종 디자인 ${s.source}</dd></dl></div>
-        <div class="screen-actions"><a class="btn" href="${demoHref(s.key)}">이 화면 시연</a>${workingCheck(s.els.length, s.els.filter((e) => stOf(s, e) !== "off").length)}</div>
+        <div class="screen-actions">${workingCheck(s.els.length, s.els.filter((e) => stOf(s, e) !== "off").length)}</div>
       </div>
       ${overview}
       <div class="screen-body">
