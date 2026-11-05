@@ -371,13 +371,7 @@
       <div class="split-right" id="pright">
         <p class="eyebrow">시연하기</p>
         <h1>구매 흐름 직접 눌러 보기</h1>
-        ${bullets(["피그마에 연결해 둔 동작을 그대로 재현", "보라색 점선 영역을 누르면 다음 화면이나 창이 열림"])}
         <div class="demo-side">
-          <section class="card panel">
-            <h2>${esc(s.name)}</h2>
-            <p>${esc(s.summary)}</p>
-            <div class="btns" style="margin:12px 0 0"><a class="btn small" href="${docHref(s.id)}">이 화면 문서 보기</a><a class="btn small" href="${demoHref("hom", "09")}">처음부터</a></div>
-          </section>
           <section class="card panel">
             <h3>핵심 흐름</h3>
             <ol class="progress">${FLOW.map((f, i) => `<li class="${i < stepIdx ? "past" : i === stepIdx ? "now" : ""}"><span class="num">${i + 1}</span><span>${esc(f.title)}<small>${elTag(f.sc, f.el)}</small></span></li>`).join("")}</ol>
