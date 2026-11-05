@@ -222,7 +222,7 @@
   }
 
   function commonDoc() {
-    const idmap = SCREENS.map((s) => `<div class="cid"><div class="cid-head">${esc(s.name)}</div><ul>${s.els.map((e) => `<li><a href="${docHref(s.id, e.n)}"><b>${e.n}</b> ${esc(e.name)}</a><span class="muted">→ ${e.fns.map((f) => esc(label(f))).join(", ")}</span></li>`).join("")}</ul></div>`).join("");
+    const idmap = SCREENS.map((s) => `<div class="cid"><div class="cid-head">${esc(s.name)}</div><ul>${s.els.map((e) => `<li><a href="${docHref(s.id, e.n)}"><b>${e.n}</b> ${esc(e.name)}</a>${e.fns.length ? `<span class="muted">→ ${e.fns.map((f) => esc(label(f))).join(", ")}</span>` : ""}</li>`).join("")}</ul></div>`).join("");
     return `<section class="card common" id="common">
       <div class="box-section" id="idmap" style="margin-top:0"><h3>화면별 요소·기능 목록</h3><div class="idmap">${idmap}</div></div>
       <div class="box-section" id="log"><h3>검토·결정 기록</h3><ul class="log">${LOG.map((l) => `<li><time>${l[0]}</time>${list(l[1])}</li>`).join("")}</ul></div>
