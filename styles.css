@@ -154,6 +154,23 @@ details.planned summary::before { content: "▸"; display: inline-block; width: 
 details.planned[open] summary::before { content: "▾"; }
 details.planned .dots { margin-top: 4px; color: #9aa29e; }
 details.planned a.rid { color: inherit; text-decoration-color: currentColor; }
+.spec details.planned dt { color: #9aa29e; font-size: 12px; margin-top: 7px; }
+.spec details.planned dd { font-size: 13px; }
+.spec details.planned .chip { background: #eef0ef; color: #8a938e; }
+/* 동작 여부 (피그마 프로토타입 연결 기준) */
+.chip.st-on { background: var(--green); color: #fff; }
+.chip.st-part { background: #fff; color: var(--green); border: 1px solid var(--green); }
+.chip.st-off { background: #e4e7e5; color: #5d6661; }
+.fn-name .chip { vertical-align: 1px; font-size: 11px; padding: 0 7px; }
+.impl { display: grid; gap: 6px; margin: 6px 0 4px; }
+.impl-on, .impl-off { padding: 7px 10px; border-radius: 0 8px 8px 0; font-size: 13.5px; }
+.impl b { display: block; font-size: 12.5px; }
+.impl-on { background: #fff; border-left: 3px solid var(--green); }
+.impl-on b { color: var(--green); }
+.impl-off { background: #f1f3f2; border-left: 3px solid #b7bfba; color: #5d6661; }
+.impl-off b { color: #5d6661; }
+.impl .dots { margin: 1px 0 0; }
+.off-line { margin: 4px 0 0; font-size: 14px; font-weight: 700; color: #5d6661; }
 .fn { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--purple-line); }
 .fn:first-of-type { margin-top: 4px; padding-top: 0; border-top: 0; }
 .fn-name { font-weight: 800; color: var(--purple); font-size: 14px; }

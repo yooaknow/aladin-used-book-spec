@@ -80,7 +80,7 @@
 
     const sides = [
       { t: "담기 완료 알림 → 장바구니", path: "상품 상세 ‘장바구니’ → 완료 알림의 ‘장바구니 보기’ → 장바구니", d: ["담기 완료 알림의 링크로 장바구니로 이동", "알림 위치 기준은 확인 필요"], chips: ["SC-DET-01/06", "C-CMP-03"], demo: demoHref("det", "06") },
-      { t: "필터 적용", path: "가격 비교 ‘저가격순’·‘모든 품질 등급’ → 아래에서 필터 창 → ‘필터 적용하기’", d: ["바깥 어두운 부분 누름 → 적용 없이 닫힘", "필터 창 피그마 연결은 디자인에서 추가 예정"], chips: ["SC-CMP-01/02"], tag: "연결 예정", demo: demoHref("cmp", "02") },
+      { t: "필터 적용", path: "가격 비교 ‘저가격순’·‘모든 품질 등급’ → 아래에서 필터 창 → ‘필터 적용하기’", d: ["‘정렬 순서’ 탭·‘반값택배만 보기’·‘필터 적용하기’까지 동작", "바깥 어두운 부분 누름 → 닫힘"], chips: ["SC-CMP-01/02"], demo: demoHref("cmp", "02") },
       { t: "보관", path: "가격 비교 보관 아이콘 → 눌린 모양 + 보관 완료 알림", d: ["보관 완료 알림은 잠시 뒤 자동으로 닫힘"], chips: ["SC-CMP-01/04"], demo: demoHref("cmp", "04") },
       { t: "Thanks to 안내·공감", path: "상품 상세 리뷰 ⓘ → Thanks to 설명 말풍선 / 공감 → 눌린 모양", d: ["말풍선은 아이콘 바로 위에 뜸", "말풍선 바깥 누름 → 닫힘"], chips: ["SC-DET-01/05"], demo: demoHref("det", "05") },
       { t: "뒤로 가기", path: "장바구니 → 상품 상세 → 가격 비교 → 홈", d: ["화면 위 뒤로 아이콘으로 이전 화면으로"], chips: [], demo: demoHref("crt") },
@@ -124,28 +124,50 @@
   }
 
   /* ---------------- 문서 보기 ---------------- */
-  const G_ROWS = [["role", "역할"], ["show", "화면에 보이는 것"], ["act", "동작"], ["memo", "디자인 메모"]];
+  const G_ROWS = [["role", "역할"], ["show", "화면에 보이는 것"], ["act", "기획 내용"], ["memo", "디자인 메모"]];
   const F_ROWS = [["when", "실행 조건"], ["rule", "처리 규칙"], ["steps", "처리 순서"], ["ok", "성공하면"], ["fail", "실패하면"]];
 
+  // 동작 여부 (피그마 프로토타입 연결 기준): on 동작 / part 일부 동작 / view·off 동작하지 않음
+  const ST_CHIP = {
+    on: '<span class="chip st-on">동작</span>',
+    part: '<span class="chip st-part">일부 동작</span>',
+    view: '<span class="chip st-off">동작하지 않음</span>',
+    off: '<span class="chip st-off">동작하지 않음</span>'
+  };
+  const elStatus = (im) => (!im.works.length ? "off" : im.noop.length ? "part" : "on");
+
   // 원래 기획한 기능: 개발할 내용과 헷갈리지 않게 연한 회색으로 접어 둔다
-  const plannedBox = (items) => (items ? `<details class="planned"><summary>원래 기획한 기능 (참고용)</summary>${list(items)}</details>` : "");
+  const plannedBox = (body) => (body ? `<details class="planned"><summary>원래 기획한 기능 (참고용)</summary>${body}</details>` : "");
 
   function fnDoc(f) {
-    const head = `<div class="fn-name">${esc(f.name)} ${codeTag(f.id)}</div>`;
-    if (f.ref) return `<div class="fn">${head}<p class="ref">여러 요소가 같이 쓰는 기능 · 자세한 규칙은 ${rich(f.ref)}에 적어 둠</p>${f.note ? list(f.note) : ""}${plannedBox(f.planned)}</div>`;
+    if (f.ref) return `<div class="fn"><div class="fn-name">${esc(f.name)} ${codeTag(f.id)}</div><p class="ref">여러 요소가 같이 쓰는 기능 · 규칙은 ${rich(f.ref)}에 적어 둠</p>${f.note ? list(f.note) : ""}${plannedBox(f.planned && list(f.planned))}</div>`;
+    const st = FN_STATUS[f.id] || "on";
+    const head = `<div class="fn-name">${esc(f.name)} ${ST_CHIP[st]} ${codeTag(f.id)}</div>`;
     const rows = F_ROWS.filter(([k]) => f[k]).map(([k, l]) => {
       const v = k === "steps" ? `<ol class="steps-ol">${f.steps.map((t) => `<li>${rich(t)}</li>`).join("")}</ol>` : list(f[k]);
       return `<dt>${l}</dt><dd>${v}</dd>`;
     }).join("");
     const pol = f.pol ? `<dt>아직 정해야 할 정책</dt><dd class="pols">${f.pol.map((p) => idLink(p, "chip amber")).join("")}</dd>` : "";
-    return `<div class="fn" id="${f.id}">${head}<dl>${rows}${pol}</dl>${plannedBox(f.planned)}</div>`;
+    const extra = f.planned ? list(f.planned) : "";
+    // 동작하지 않는 기능은 "동작하지 않음"만 보이고, 원래 기획은 회색 칸에 접어 둔다
+    if (st === "view" || st === "off") {
+      return `<div class="fn" id="${f.id}">${head}<p class="off-line">동작하지 않음${st === "view" ? " · 화면에 보이기만 함" : ""}</p>${plannedBox(`<dl>${rows}${pol}</dl>${extra}`)}</div>`;
+    }
+    return `<div class="fn" id="${f.id}">${head}<dl>${rows}${pol}</dl>${plannedBox(extra)}</div>`;
+  }
+
+  // 요소에서 동작하는 것 / 동작하지 않는 것
+  function implBox(im) {
+    const on = im.works.length ? `<div class="impl-on"><b>동작</b>${list(im.works)}</div>` : "";
+    const off = `<div class="impl-off"><b>동작하지 않음</b>${im.noop.length ? list(im.noop) : '<p class="one">화면에 보이기만 함</p>'}</div>`;
+    return `<div class="impl">${on}${im.noop.length || !im.works.length ? off : ""}</div>`;
   }
 
   function elDoc(s, e) {
-    const tags = [];
+    const im = IMPL[`${s.id}/${e.n}`] || { works: [], noop: [] };
+    const tags = [ST_CHIP[elStatus(im)]];
     if (e.flowStart) tags.push('<span class="chip pink">흐름 시작</span>');
     if (e.flowStep) tags.push('<span class="chip pink">핵심 흐름</span>');
-    if (e.displayOnly) tags.push('<span class="chip gray">화면만 표시</span>');
     if (e.memo) tags.push('<span class="chip gray">디자인 메모 있음</span>');
     const g = G_ROWS.filter(([k]) => e[k]).map(([k, l]) => {
       const a = k === "memo" ? ' class="annot"' : k === "role" ? ' class="role"' : "";
@@ -156,8 +178,8 @@
       <div class="chips">${e.fns.map((f) => `<span class="chip purple">기능: ${esc(label(f))}</span>`).join("")}${tags.join("")}</div>
       <div class="print-only print-crop">${thumb(s, e.boxes[0], 230, 380)}</div>
       <div class="pair">
-        <section class="spec green"><h4>화면설계서</h4><p class="sub">무엇이 보이고, 어떻게 움직이나</p><dl>${g}</dl>${plannedBox(e.planned)}</section>
-        <section class="spec purple"><h4>기능명세서</h4><p class="sub">언제, 무엇을 처리하고, 결과는 어떤가</p>${e.p.map(fnDoc).join("")}</section>
+        <section class="spec green"><h4>화면설계서</h4><p class="sub">무엇이 보이고, 어떻게 움직이나</p><dl>${g}</dl>${plannedBox(e.planned && list(e.planned))}</section>
+        <section class="spec purple"><h4>기능명세서</h4><p class="sub">무엇이 동작하고, 어떻게 처리하나</p>${implBox(im)}${e.p.map(fnDoc).join("")}</section>
       </div>
     </article>`;
   }
