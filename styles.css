@@ -257,7 +257,7 @@ a.chip:hover { filter: brightness(.96); }
 .history li:first-child { background: var(--purple-bg); }
 .empty { color: var(--muted); font-size: 12.5px; }
 
-footer.foot { max-width: var(--max); margin: 0 auto; padding: 0 24px 36px; color: var(--muted); font-size: 12.5px; }
+.foot { max-width: var(--max); margin: 0 auto; padding: 0 24px 36px; color: var(--muted); font-size: 12.5px; }
 
 /* ---------- 개조식 목록 ---------- */
 .bullets { margin: 4px 0 0; padding-left: 18px; color: var(--muted); font-size: 14px; max-width: 860px; }
@@ -317,12 +317,12 @@ footer.foot { max-width: var(--max); margin: 0 auto; padding: 0 24px 36px; color
   .el-head { flex-direction: column; }
   .log li { grid-template-columns: 1fr; gap: 2px; }
   .phone { padding: 8px; width: calc(375px * var(--s) + 16px); }
-  footer.foot { padding: 0 16px 28px; }
+  .foot { padding: 0 16px 28px; }
 }
 
 /* ---------- print ---------- */
 @media print {
-  .top, .btns, .finder, .el-head .btn, .shot .hint, footer.foot { display: none !important; }
+  .top, .btns, .finder, .el-head .btn, .shot .hint, .foot { display: none !important; }
   body { background: #fff; font-size: 11px; }
   body.app-mode { height: auto; overflow: visible; }
   body.app-mode main { height: auto; }

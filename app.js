@@ -10,7 +10,8 @@
   const demoHref = (key, n) => `#/demo/${key}${n ? "/" + n : ""}`;
   const findEl = (sc, n) => byId[sc].els.find((e) => e.n === n);
   const bullets = (items) => `<ul class="bullets">${items.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>`;
-  const footer = () => `<footer class="foot">화면설계서+기능명세서 ver1.0 · 1104 update) Redesign(6091:8696) 기준 · 2026.11.05 · 합동세미나 모바일 웹 3조 · 알라딘 공식 서비스가 아닌 학습용 리디자인 문서</footer>`;
+  // 하단 여백만 유지(문구 없음)
+  const footer = () => `<div class="foot" aria-hidden="true"></div>`;
   const isSplit = () => window.innerWidth > 1020;
 
   function thumb(s, b, w = 210, maxH = 170, hl = true) {
