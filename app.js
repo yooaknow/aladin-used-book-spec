@@ -77,13 +77,6 @@
     ].map((m) => `<article class="card mini"><h3>${esc(m.t)}</h3><div class="path">${esc(m.path)}</div>${bullets(m.d)}
         <div class="chips">${m.chips.map((c) => idLink(c, "chip purple")).join("")}${m.tag ? `<span class="chip amber">${m.tag}</span>` : ""}<a class="chip line" href="${m.demo}">시연하기</a></div></article>`).join("");
 
-    const screens = SCREENS.map((s) => `<article class="card screen-card">
-        ${thumb(s, [0, 0, s.w, 260], 120, 180, false)}
-        <div><h3>${esc(s.name)}</h3><p>${esc(s.summary)}</p>
-          <div class="chips"><span class="chip purple">요소 ${s.els.length}개</span><span class="chip gray">기능 ${new Set(s.els.flatMap((e) => e.fns)).size}개</span></div>
-          <div class="btns"><a class="btn small" href="${docHref(s.id)}">문서 보기</a><a class="btn small primary" href="${demoHref(s.key)}">시연하기</a></div></div>
-      </article>`).join("");
-
     app.innerHTML = `<div class="wrap">
       <p class="eyebrow">전체 흐름 보기</p>
       <h1>중고책 구매 흐름 한눈에 보기</h1>
@@ -102,12 +95,6 @@
         <h2>보조 흐름</h2>
         <p class="muted">핵심 흐름 중간에 뜨는 창, 뒤로 가기, 금액 연결</p>
         <div class="grid two">${sides}</div>
-      </section>
-
-      <section class="section">
-        <h2>화면 4개</h2>
-        <p class="muted">화면마다 요소별로 화면설계서·기능명세서를 나란히 정리</p>
-        <div class="grid two">${screens}</div>
       </section>
     </div>${footer()}`;
   }
