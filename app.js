@@ -223,8 +223,7 @@
       <div class="box-section" id="policies"><h3>아직 정해야 할 정책 (${POLICIES.length}개)</h3><div class="card" style="box-shadow:none;overflow-x:auto"><table class="table"><tr class="head"><th>정책</th><th>정해야 할 것</th><th>누가</th><th>어떻게 정하나</th></tr>${POLICIES.map((p) => `<tr id="${p[0]}"><th>${esc(p[1])} ${codeTag(p[0])}</th><td>${list(p[2])}</td><td class="nowrap">${esc(p[3])}</td><td class="muted">${esc(p[4])}</td></tr>`).join("")}</table></div></div>
       <div class="box-section" id="cids"><h3>기획안과 최종 디자인이 다른 점</h3><div class="cids">${Object.keys(CIDS).map((c) => cidCard(c, true)).join("")}</div></div>
       <div class="box-section" id="idmap"><h3>화면별 요소·기능 목록</h3><div class="idmap">${idmap}</div></div>
-      <div class="box-section" id="log"><h3>검토·결정 기록</h3><ul class="log">${LOG.map((l) => `<li><time>${l[0]}</time>${list(l[1])}</li>`).join("")}</ul>
-        <p class="note">새로 결정하면 함께 적기: 정책 이름 · 최종 문구·규칙 · 결정 이유 · 담당 · 결정일 · 관련 화면·기능</p></div>
+      <div class="box-section" id="log"><h3>검토·결정 기록</h3><ul class="log">${LOG.map((l) => `<li><time>${l[0]}</time>${list(l[1])}</li>`).join("")}</ul></div>
     </section>`;
   }
 
