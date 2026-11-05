@@ -194,7 +194,7 @@
     }).map((a) => `<span class="hotmark" data-el="${a.el}" style="left:${a.r[0]}px;top:${a.r[1]}px;width:${a.r[2]}px;height:${a.r[3]}px" title="${esc(a.label)}"></span>`).join("");
   }
 
-  function screenDoc(s) {
+  function screenDoc(s, i) {
     const W = 276, k = W / s.w;
     // 인쇄 전용: 화면 전체를 한 페이지 높이에 맞춘 개요 + 요소 번호 목록
     // (transform 없이 축소 좌표로 직접 배치해야 인쇄 시 박스가 다음 페이지로 밀리지 않음)
@@ -206,11 +206,12 @@
       if (f.startsWith("[시연]")) return `<li class="proto"><span class="chip pink sm">시연 흐름</span> ${rich(f.slice(4).trim())}</li>`;
       return `<li>${rich(f)}</li>`;
     };
-    return `<section class="card screen" id="${s.id}" data-sc="${s.id}">
+    // 화면 카드 바로 위 체크박스 (첫 화면인 홈은 문서 맨 위 체크박스가 그 역할)
+    const tools = i > 0 ? `<div class="doc-tools screen-tools">${workingCheck(s.els.length, s.els.filter((e) => stOf(s, e) !== "off").length)}</div>` : "";
+    return `${tools}<section class="card screen" id="${s.id}" data-sc="${s.id}">
       <div class="screen-head">
         <div><h2>${esc(s.name)}${codeTag(s.id)}</h2><p>${esc(s.summary)}</p>
           <dl class="meta"><dt>들어오는 곳</dt><dd>${s.entry.map(esc).join(" · ")}</dd><dt>피그마 원본</dt><dd>최종 디자인 ${s.source}</dd></dl></div>
-        <div class="screen-actions">${workingCheck(s.els.length, s.els.filter((e) => stOf(s, e) !== "off").length)}</div>
       </div>
       ${overview}
       <div class="screen-body">
@@ -586,8 +587,8 @@
       onlyWorking = ev.target.checked;
       document.querySelectorAll("[data-only-working]").forEach((c) => { c.checked = onlyWorking; });
       document.querySelector(".doc-split")?.classList.toggle("only-working", onlyWorking);
-      // 화면 칸 안의 체크박스를 눌렀으면 위쪽 내용이 줄어도 그 화면에 머물게
-      ev.target.closest(".screen")?.scrollIntoView({ block: "start" });
+      // 화면 위 체크박스를 눌렀으면 위쪽 내용이 줄어도 그 화면에 머물게
+      ev.target.closest(".screen-tools")?.scrollIntoView({ block: "start" });
       docState.el = null;
       onDocScroll();
       return;
