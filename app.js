@@ -232,7 +232,7 @@
         <p class="eyebrow">문서 보기</p>
         <h1>화면설계서, 기능명세서</h1>
         <div class="doc-tools">
-          <label class="only-working-check"><input type="checkbox" data-only-working${onlyWorking ? " checked" : ""}><span>구현할 기능만 보기</span><small>${ELS}개 중 ${WORKING_COUNT}개</small></label>
+          <label class="only-working-check"><input type="checkbox" data-only-working${onlyWorking ? " checked" : ""}><span>동작이 있는 기능만 보기</span><small>${ELS}개 중 ${WORKING_COUNT}개</small></label>
         </div>
         <details class="card finder" aria-label="요소 번호로 찾기"><summary><h2>요소 번호로 찾기</h2><span class="finder-hint">화면 4개 · 요소 ${ELS}개 · 기능 ${FNS}개</span></summary><div class="finder-body">${finder}</div></details>
         ${SCREENS.map(screenDoc).join("")}
