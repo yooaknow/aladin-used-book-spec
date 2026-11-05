@@ -201,7 +201,7 @@ a.rid:hover { text-decoration-style: solid; text-decoration-color: var(--purple)
 .cid dl.cmp dd { margin: 0; }
 .cid dl.cmp .dots { margin: 0; }
 .rule .dots { font-size: 13.5px; margin: 0; }
-.log li .dots { margin: 0; }
+.log > li .dots { margin: 0; }
 .extra .dots { font-size: 13px; color: var(--muted); text-align: left; }
 .box-section { margin-top: 22px; }
 .box-section h3 { font-size: 15px; margin-bottom: 8px; }
@@ -236,7 +236,8 @@ a.rid:hover { text-decoration-style: solid; text-decoration-color: var(--purple)
 .idmap a { text-decoration: none; }
 .idmap a:hover { text-decoration: underline; }
 .log { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 13.5px; }
-.log li { display: grid; grid-template-columns: 90px 1fr; gap: 10px; padding: 8px 12px; border-radius: 9px; background: #f6f7f6; }
+/* 기록 한 줄(날짜 | 내용)만 grid로. 내용 안의 개조식 li까지 grid가 되면 글이 왼쪽 90px 칸으로 쏠림 */
+.log > li { display: grid; grid-template-columns: 90px 1fr; gap: 10px; padding: 8px 12px; border-radius: 9px; background: #f6f7f6; }
 .log time { font-weight: 700; color: var(--muted); }
 
 /* ---------- demo view ---------- */
@@ -363,7 +364,7 @@ a.rid:hover { text-decoration-style: solid; text-decoration-color: var(--purple)
   .screen-card { grid-template-columns: 96px 1fr; }
   .screen-card .thumb { height: 150px; }
   .el-head { flex-direction: column; }
-  .log li { grid-template-columns: 1fr; gap: 2px; }
+  .log > li { grid-template-columns: 1fr; gap: 2px; }
   .phone { padding: 8px; width: calc(375px * var(--s) + 16px); }
   .foot { padding: 0 16px 28px; }
 }
