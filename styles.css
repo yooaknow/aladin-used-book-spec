@@ -99,8 +99,15 @@ a.chip:hover { filter: brightness(.96); }
 .screen-card .btns { margin: 8px 0 0; gap: 6px; }
 
 /* ---------- doc view ---------- */
-.finder { padding: 16px 18px; margin-top: 6px; }
-.finder h2 { font-size: 15px; margin-bottom: 8px; }
+/* 요소 번호로 찾기: 처음엔 접혀 있고 눌러서 펼침 */
+.finder { padding: 0; margin-top: 16px; }
+.finder > summary { display: flex; align-items: center; gap: 10px; padding: 14px 18px; cursor: pointer; list-style: none; }
+.finder > summary::-webkit-details-marker { display: none; }
+.finder > summary::before { content: "▸"; width: 12px; color: var(--muted); }
+.finder[open] > summary::before { content: "▾"; }
+.finder > summary h2 { margin: 0; font-size: 15px; }
+.finder-hint { font-size: 12.5px; color: var(--muted); }
+.finder-body { padding: 4px 18px 12px; border-top: 1px solid var(--line); }
 .finder-row { display: grid; grid-template-columns: 180px 1fr; gap: 6px 12px; padding: 8px 0; border-top: 1px solid var(--line); align-items: center; }
 .finder-row:first-of-type { border-top: 0; }
 .finder-row .label { font-size: 13px; font-weight: 600; color: var(--muted); }
