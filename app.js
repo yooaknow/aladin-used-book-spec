@@ -19,15 +19,12 @@
       e.p.forEach((f) => { LABEL[f.id] = f.name; });
     });
   });
-  RULES.forEach((r) => { LABEL[r[0]] = r[1]; });
-  POLICIES.forEach((p) => { LABEL[p[0]] = p[1]; });
-  Object.entries(CIDS).forEach(([k, c]) => { LABEL[k] = c.t; });
   const label = (id) => LABEL[id] || id;
   const elTag = (sc, n) => `${byId[sc].short} ${n}`;
   const codeTag = (id) => `<span class="code">${id}</span>`;
 
   // 글 안의 번호는 이름 링크로, `코드`는 코드 글꼴로, [제안]은 ‘기획 제안’ 표시로 바꾼다
-  const ID_RE = /\b(SC-[A-Z]{3}-\d{2}(?:\/\d{2})?|F-[A-Z]{3}-\d{2}|C-[A-Z]{3}-\d{2}|[RP]-\d{2})\b/g;
+  const ID_RE = /\b(SC-[A-Z]{3}-\d{2}(?:\/\d{2})?|F-[A-Z]{3}-\d{2})\b/g;
   const idHref = (id) => (id.startsWith("SC-") ? docHref(...id.split("/")) : `#/doc/${id}`);
   const idLink = (id, cls = "rid") => `<a class="${cls}" href="${idHref(id)}" title="${id}">${esc(label(id))}</a>`;
   const SUGGEST = '<span class="chip amber sm">기획 제안</span>';
@@ -56,14 +53,6 @@
     return `<div class="thumb" style="height:${hgt}px"><div style="position:relative;width:${w}px;height:${hgt}px;margin:0 auto;overflow:hidden"><img src="${s.img}" alt="" style="left:0;top:${-top * k}px;width:${w}px;height:${s.h * k}px;transform:none">${box}</div></div>`;
   }
 
-  function cidCard(code, withId) {
-    const c = CIDS[code];
-    return `<div class="cid${c.done ? " done-c" : ""}"${withId ? ` id="${code}"` : ""}>
-      <div class="cid-head">${esc(c.t)}${c.done ? '<span class="chip">반영됨</span>' : '<span class="chip amber">확인 필요</span>'}${codeTag(code)}</div>
-      <dl class="cmp">${c.rows.map(([l, v]) => `<dt>${esc(l)}</dt><dd>${list(v)}</dd>`).join("")}</dl>
-      <div class="pol">관련 정책: ${rich(c.pol)}</div></div>`;
-  }
-
   /* ---------------- 전체 흐름 보기 ---------------- */
   function renderFlow() {
     const steps = FLOW.map((f, i) => {
@@ -79,12 +68,12 @@
     }).join("");
 
     const sides = [
-      { t: "담기 완료 알림 → 장바구니", path: "상품 상세 ‘장바구니’ → 완료 알림의 ‘장바구니 보기’ → 장바구니", d: ["담기 완료 알림의 링크로 장바구니로 이동", "알림 위치 기준은 확인 필요"], chips: ["SC-DET-01/06", "C-CMP-03"], demo: demoHref("det", "06") },
+      { t: "담기 완료 알림 → 장바구니", path: "상품 상세 ‘장바구니’ → 완료 알림의 ‘장바구니 보기’ → 장바구니", d: ["담기 완료 알림의 링크로 장바구니로 이동", "알림은 화면 아래 구매 바 위에 잠깐 뜸"], chips: ["SC-DET-01/06"], demo: demoHref("det", "06") },
       { t: "필터 적용", path: "가격 비교 ‘저가격순’·‘모든 품질 등급’ → 아래에서 필터 창 → ‘필터 적용하기’", d: ["‘정렬 순서’ 탭·‘반값택배만 보기’·‘필터 적용하기’까지 동작", "바깥 어두운 부분 누름 → 닫힘"], chips: ["SC-CMP-01/02"], demo: demoHref("cmp", "02") },
       { t: "보관", path: "가격 비교 보관 아이콘 → 눌린 모양 + 보관 완료 알림", d: ["보관 완료 알림은 잠시 뒤 자동으로 닫힘"], chips: ["SC-CMP-01/04"], demo: demoHref("cmp", "04") },
       { t: "Thanks to 안내·공감", path: "상품 상세 리뷰 ⓘ → Thanks to 설명 말풍선 / 공감 → 눌린 모양", d: ["말풍선은 아이콘 바로 위에 뜸", "말풍선 바깥 누름 → 닫힘"], chips: ["SC-DET-01/05"], demo: demoHref("det", "05") },
       { t: "뒤로 가기", path: "장바구니 → 상품 상세 → 가격 비교 → 홈", d: ["화면 위 뒤로 아이콘으로 이전 화면으로"], chips: [], demo: demoHref("crt") },
-      { t: "금액 연결", path: "5,400원 + 일리아스 18,000원 + 배송비 3,500원 = 26,900원", d: ["가격 비교·상세·장바구니의 판매자·상태·금액이 모두 같음 (우나야하 · 중 · 64%)"], chips: ["C-CRT-02", "SC-CRT-01/02"], demo: demoHref("crt", "02") }
+      { t: "금액 연결", path: "5,400원 + 일리아스 18,000원 + 배송비 3,500원 = 26,900원", d: ["가격 비교·상세·장바구니의 판매자·상태·금액이 모두 같음 (우나야하 · 중 · 64%)"], chips: ["SC-CRT-01/02"], demo: demoHref("crt", "02") }
     ].map((m) => `<article class="card mini"><h3>${esc(m.t)}</h3><div class="path">${esc(m.path)}</div>${bullets(m.d)}
         <div class="chips">${m.chips.map((c) => idLink(c, "chip purple")).join("")}${m.tag ? `<span class="chip amber">${m.tag}</span>` : ""}<a class="chip line" href="${m.demo}">시연하기</a></div></article>`).join("");
 
@@ -147,13 +136,12 @@
       const v = k === "steps" ? `<ol class="steps-ol">${f.steps.map((t) => `<li>${rich(t)}</li>`).join("")}</ol>` : list(f[k]);
       return `<dt>${l}</dt><dd>${v}</dd>`;
     }).join("");
-    const pol = f.pol ? `<dt>아직 정해야 할 정책</dt><dd class="pols">${f.pol.map((p) => idLink(p, "chip amber")).join("")}</dd>` : "";
     const extra = f.planned ? list(f.planned) : "";
     // 동작하지 않는 기능은 "동작하지 않음"만 보이고, 원래 기획은 회색 칸에 접어 둔다
     if (st === "view" || st === "off") {
-      return `<div class="fn" id="${f.id}">${head}<p class="off-line">동작하지 않음${st === "view" ? " · 화면에 보이기만 함" : ""}</p>${plannedBox(`<dl>${rows}${pol}</dl>${extra}`)}</div>`;
+      return `<div class="fn" id="${f.id}">${head}<p class="off-line">동작하지 않음${st === "view" ? " · 화면에 보이기만 함" : ""}</p>${plannedBox(`<dl>${rows}</dl>${extra}`)}</div>`;
     }
-    return `<div class="fn" id="${f.id}">${head}<dl>${rows}${pol}</dl>${plannedBox(extra)}</div>`;
+    return `<div class="fn" id="${f.id}">${head}<dl>${rows}</dl>${plannedBox(extra)}</div>`;
   }
 
   // 요소에서 동작하는 것 / 동작하지 않는 것
@@ -221,7 +209,6 @@
           ${s.els.map((e) => elDoc(s, e)).join("")}
           <div class="box-section"><h3>사용자 이동 경로</h3><ul class="flowlist">${s.flow.map(flowItem).join("")}</ul></div>
           <div class="box-section"><h3>상태별 화면 (빈 화면·오류·완료)</h3><p class="note" style="margin:0 0 6px">디자인에 아직 없는 화면은 ‘기획 제안’으로 표시</p><div class="card" style="box-shadow:none;overflow-x:auto"><table class="table states">${states}</table></div></div>
-          <div class="box-section"><h3>기획안과 디자인이 다른 점</h3><div class="cids">${s.conf.map((c) => cidCard(c)).join("")}</div></div>
           ${extras}
         </div>
       </div>
@@ -231,11 +218,7 @@
   function commonDoc() {
     const idmap = SCREENS.map((s) => `<div class="cid"><div class="cid-head">${esc(s.name)}</div><ul>${s.els.map((e) => `<li><a href="${docHref(s.id, e.n)}"><b>${e.n}</b> ${esc(e.name)}</a><span class="muted">→ ${e.fns.map((f) => esc(label(f))).join(", ")}</span></li>`).join("")}</ul></div>`).join("");
     return `<section class="card common" id="common">
-      <h2>공통 규칙과 아직 정해야 할 정책</h2><p class="muted" style="margin:0 0 12px;font-size:14px">여러 화면에 똑같이 적용되는 것</p>
-      <div class="rules">${RULES.map((r) => `<div class="rule" id="${r[0]}"><b>${esc(r[1])} ${codeTag(r[0])}</b>${list(r[2])}</div>`).join("")}</div>
-      <div class="box-section" id="policies"><h3>아직 정해야 할 정책 (${POLICIES.length}개)</h3><div class="card" style="box-shadow:none;overflow-x:auto"><table class="table"><tr class="head"><th>정책</th><th>정해야 할 것</th><th>누가</th><th>어떻게 정하나</th></tr>${POLICIES.map((p) => `<tr id="${p[0]}"><th>${esc(p[1])} ${codeTag(p[0])}</th><td>${list(p[2])}</td><td class="nowrap">${esc(p[3])}</td><td class="muted">${esc(p[4])}</td></tr>`).join("")}</table></div></div>
-      <div class="box-section" id="cids"><h3>기획안과 최종 디자인이 다른 점</h3><div class="cids">${Object.keys(CIDS).map((c) => cidCard(c, true)).join("")}</div></div>
-      <div class="box-section" id="idmap"><h3>화면별 요소·기능 목록</h3><div class="idmap">${idmap}</div></div>
+      <div class="box-section" id="idmap" style="margin-top:0"><h3>화면별 요소·기능 목록</h3><div class="idmap">${idmap}</div></div>
       <div class="box-section" id="log"><h3>검토·결정 기록</h3><ul class="log">${LOG.map((l) => `<li><time>${l[0]}</time>${list(l[1])}</li>`).join("")}</ul></div>
     </section>`;
   }
@@ -243,7 +226,7 @@
   const docState = { sc: null, el: null };
   function renderDoc() {
     const finder = SCREENS.map((s) => `<div class="finder-row"><div class="label">${esc(s.short)}</div><div class="chips"><a class="chip sc-link" href="${docHref(s.id)}">${esc(s.short)} 화면</a>${s.els.map((e) => `<a class="chip purple" href="${docHref(s.id, e.n)}" title="${esc(e.name)}">${e.n}</a>`).join("")}</div></div>`).join("")
-      + `<div class="finder-row"><div class="label">공통</div><div class="chips"><a class="chip gray" href="#/doc/common">공통 규칙</a><a class="chip gray" href="#/doc/policies">아직 정해야 할 정책</a><a class="chip gray" href="#/doc/cids">기획안과 다른 점</a><a class="chip gray" href="#/doc/idmap">요소·기능 목록</a><a class="chip gray" href="#/doc/log">검토 기록</a></div></div>`;
+      + `<div class="finder-row"><div class="label">목록·기록</div><div class="chips"><a class="chip gray" href="#/doc/idmap">요소·기능 목록</a><a class="chip gray" href="#/doc/log">검토 기록</a></div></div>`;
     app.innerHTML = `<div class="split doc-split">
       <aside class="split-left doc-left">
         <div class="seg" id="dseg">${SCREENS.map((s) => `<a href="${docHref(s.id)}" data-seg="${s.id}">${esc(s.short)}</a>`).join("")}</div>
