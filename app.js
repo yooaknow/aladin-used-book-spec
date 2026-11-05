@@ -117,6 +117,7 @@
     return `<article class="el" id="${s.id}-${e.n}" data-sc="${s.id}" data-el="${e.n}">
       <div class="el-head"><div class="el-title"><span class="id">${s.id}/${e.n}</span><h3>${esc(e.name)}</h3></div><a class="btn small" href="${demoHref(s.key, e.n)}">이 요소 시연</a></div>
       <div class="chips">${e.fns.map((f) => `<span class="chip purple">${f}</span>`).join("")}${tags.join("")}</div>
+      <div class="print-only print-crop">${thumb(s, e.boxes[0], 230, 380)}</div>
       <div class="pair">
         <section class="spec green"><h4>화면설계서</h4><p class="sub">위치·표시·화면 동작</p><dl>${g}</dl></section>
         <section class="spec purple"><h4>기능명세서</h4><p class="sub">조건·처리 결과</p>${p}</section>
@@ -134,13 +135,19 @@
 
   function screenDoc(s) {
     const W = 276, k = W / s.w;
-    const extras = s.extras.length ? `<div class="box-section"><h3>별도 컴포넌트</h3><div class="extras">${s.extras.map((x) => `<div class="extra"><div class="img"><img src="${x.img}" alt="${esc(x.name)}" style="width:${Math.min(x.w, 300)}px" loading="lazy"></div><b>${esc(x.name)}</b><p>${esc(x.desc)}</p></div>`).join("")}</div></div>` : "";
+    // 인쇄 전용: 화면 전체를 한 페이지 높이에 맞춘 개요 + 요소 번호 목록
+    // (transform 없이 축소 좌표로 직접 배치해야 인쇄 시 박스가 다음 페이지로 밀리지 않음)
+    const PK = Math.min(300 / s.w, 860 / s.h), px = (v) => (v * PK).toFixed(1);
+    const poBoxes = s.els.map((e) => e.boxes.map((b, i) => `<span class="po-box" style="left:${px(b[0])}px;top:${px(b[1])}px;width:${px(b[2])}px;height:${px(b[3])}px">${i === 0 ? `<span class="badge">${e.n}</span>` : ""}</span>`).join("")).join("");
+    const overview = `<div class="print-only print-overview"><div class="po-shot" style="width:${px(s.w)}px;height:${px(s.h)}px"><img src="${s.img}" alt="${esc(s.name)} 화면" style="width:${px(s.w)}px;height:${px(s.h)}px">${poBoxes}</div><ol class="po-legend">${s.els.map((e) => `<li><b>${e.n}</b>${esc(e.name)}</li>`).join("")}</ol></div>`;
+    const extras = s.extras.length ? `<div class="box-section"><h3>별도 컴포넌트</h3><div class="extras">${s.extras.map((x) => `<div class="extra"><div class="img"><img src="${x.img}" alt="${esc(x.name)}" style="width:${Math.min(x.w, 300)}px"></div><b>${esc(x.name)}</b><p>${esc(x.desc)}</p></div>`).join("")}</div></div>` : "";
     return `<section class="card screen" id="${s.id}" data-sc="${s.id}">
       <div class="screen-head">
         <div><h2><span class="chip">${s.id}</span>${esc(s.name)}</h2><p>${esc(s.summary)}</p>
           <dl class="meta"><dt>진입</dt><dd>${esc(s.entry)}</dd><dt>디자인 기준</dt><dd>[디자인] 2차 과제 / 최종 Redesign · 원본 프레임 ${s.source}</dd></dl></div>
         <div><a class="btn" href="${demoHref(s.key)}">이 화면 시연</a></div>
       </div>
+      ${overview}
       <div class="screen-body">
         <aside class="shot inline-shot" data-sc="${s.id}">
           <div class="shot-scroll"><div class="shot-canvas" style="width:${W}px;height:${Math.round(s.h * k)}px"><div class="shot-scale" style="transform:scale(${k})"><img src="${s.img}" alt="${esc(s.name)} 화면" loading="lazy" width="375" height="${s.h}">${boxesHtml(s)}</div></div></div>
@@ -172,7 +179,7 @@
 
   const docState = { sc: null, el: null };
   function renderDoc() {
-    const finder = SCREENS.map((s) => `<div class="finder-row"><div class="label">${s.id} ${esc(s.short)}</div><div class="chips"><a class="chip screen" href="${docHref(s.id)}">화면</a>${s.els.map((e) => `<a class="chip purple" href="${docHref(s.id, e.n)}" title="${esc(e.name)}">${e.n}</a>`).join("")}</div></div>`).join("")
+    const finder = SCREENS.map((s) => `<div class="finder-row"><div class="label">${s.id} ${esc(s.short)}</div><div class="chips"><a class="chip sc-link" href="${docHref(s.id)}">${esc(s.short)} 화면</a>${s.els.map((e) => `<a class="chip purple" href="${docHref(s.id, e.n)}" title="${esc(e.name)}">${e.n}</a>`).join("")}</div></div>`).join("")
       + `<div class="finder-row"><div class="label">공통</div><div class="chips"><a class="chip gray" href="#/doc/common">공통 정책 R</a><a class="chip gray" href="#/doc/policies">정책 확인 P</a><a class="chip gray" href="#/doc/cids">확인 필요 C-ID</a><a class="chip gray" href="#/doc/idmap">연결표</a><a class="chip gray" href="#/doc/log">검토 기록</a></div></div>`;
     app.innerHTML = `<div class="split doc-split">
       <aside class="split-left doc-left">
@@ -475,10 +482,21 @@
     }
   }
 
+  // 인쇄: 지연 로딩 이미지까지 모두 불러온 뒤 인쇄 창을 연다
+  async function printDoc() {
+    const imgs = [...app.querySelectorAll("img")];
+    imgs.forEach((i) => { i.loading = "eager"; });
+    await Promise.all(imgs.map((i) => (i.complete ? null : new Promise((r) => {
+      i.addEventListener("load", r, { once: true });
+      i.addEventListener("error", r, { once: true });
+    }))));
+    window.print();
+  }
+
   /* ---------------- 이벤트·라우팅 ---------------- */
   app.addEventListener("click", (ev) => {
     const t = ev.target;
-    if (t.closest("[data-print]")) { window.print(); return; }
+    if (t.closest("[data-print]")) { printDoc(); return; }
     const box = t.closest(".box");
     if (box) {
       const sc = box.closest(".inline-shot") ? box.closest(".inline-shot").dataset.sc : docState.sc, n = box.dataset.el;

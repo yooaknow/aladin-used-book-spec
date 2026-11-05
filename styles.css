@@ -107,7 +107,7 @@ a.chip:hover { filter: brightness(.96); }
 .finder-row:first-of-type { border-top: 0; }
 .finder-row .label { font-size: 13px; font-weight: 600; color: var(--muted); }
 .finder .chip { min-width: 32px; justify-content: center; padding: 4px 9px; border: 1px solid var(--purple-line); background: #fff; }
-.finder .chip.screen { border-color: var(--green-line); color: var(--green); }
+.finder .chip.sc-link { border-color: var(--green-line); color: var(--green); }
 
 .screen { margin-top: 28px; padding: 20px 22px; }
 .screen-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
@@ -321,20 +321,48 @@ a.chip:hover { filter: brightness(.96); }
 }
 
 /* ---------- print ---------- */
+.print-only { display: none; }
 @media print {
-  .top, .btns, .finder, .el-head .btn, .shot .hint, .foot { display: none !important; }
+  @page { size: A4; margin: 12mm; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .top, .btns, .finder, .el-head .btn, .shot .hint, .foot, .inline-shot { display: none !important; }
+  .print-only { display: block; }
   body { background: #fff; font-size: 11px; }
   body.app-mode { height: auto; overflow: visible; }
   body.app-mode main { height: auto; }
   .split { display: block; padding: 0; }
   .split-left { display: none !important; }
   .split-right { overflow: visible; padding: 0; }
-  .split .inline-shot { display: block; }
   .wrap { padding: 0; max-width: none; }
   .card { box-shadow: none; }
-  .screen { break-before: page; border: 0; padding: 0; }
-  .screen-body { grid-template-columns: 220px 1fr; }
-  .shot { position: static; }
-  .shot-scroll { max-height: none; overflow: visible; border: 0; padding: 0; }
-  .el, .spec, .cid, .rule { break-inside: avoid; }
+
+  /* 화면 1개 = 개요 1페이지(화면 전체 + 번호 목록) → 요소별 명세 */
+  .screen { break-before: page; border: 0; padding: 0; margin: 0; border-radius: 0; }
+  .screen-head { break-after: avoid; }
+  .print-overview { display: flex; gap: 20px; align-items: flex-start; margin-top: 14px; break-inside: avoid; break-after: page; }
+  .screen-head .btn { display: none; }
+  .po-shot { position: relative; flex: none; border: 1px solid var(--line); border-radius: 6px; background: #fff; break-inside: avoid; }
+  .po-shot img { display: block; border-radius: 6px; }
+  .po-box { position: absolute; border: 1.5px solid var(--purple); border-radius: 4px; }
+  .po-box .badge { min-width: 18px; height: 18px; right: -8px; top: -8px; font-size: 10px; }
+  .po-legend { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; font-size: 13px; }
+  .po-legend b { display: inline-block; min-width: 26px; margin-right: 8px; padding: 1px 6px; border-radius: 6px; background: var(--purple); color: #fff; font-size: 11px; text-align: center; }
+  .screen-body { display: block; margin-top: 0; }
+
+  /* 요소: 왼쪽 화면 일부(해당 영역 강조) + 오른쪽 화면설계서·기능명세서 */
+  .el { display: grid; grid-template-columns: 230px minmax(0, 1fr); column-gap: 16px; padding: 14px 0 16px; }
+  .el > * { grid-column: 1 / -1; }
+  .el-head { flex-direction: row; break-after: avoid; }
+  .el > .chips { margin: 6px 0 10px; break-after: avoid; }
+  .el > .print-crop { grid-column: 1; grid-row: 3; align-self: start; break-inside: avoid; }
+  .el > .pair { grid-column: 2; grid-row: 3; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .el > .done { margin-top: 10px; }
+  .print-crop .thumb { border-radius: 8px; }
+  .spec { padding: 10px 12px; }
+  .spec h4 { font-size: 13px; }
+  .spec dt { font-size: 11px; margin-top: 7px; break-after: avoid; }
+  .spec dd { font-size: 11.5px; break-inside: avoid; }
+  .fn-name { break-after: avoid; }
+  .box-section h3 { break-after: avoid; }
+  .extra, .cid, .rule, .done, tr { break-inside: avoid; }
 }
