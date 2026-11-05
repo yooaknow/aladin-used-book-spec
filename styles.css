@@ -161,8 +161,11 @@ a.chip:hover { filter: brightness(.96); }
 .steps-ol { margin: 2px 0 0; padding-left: 20px; }
 .steps-ol li { margin: 1px 0; }
 code.c { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 12px; background: #fff; border: 1px solid var(--line); padding: 0 5px; border-radius: 5px; white-space: nowrap; }
-a.rid { font-size: .86em; font-weight: 700; color: var(--purple); background: #fff; border: 1px solid var(--purple-line); padding: 0 5px; border-radius: 5px; text-decoration: none; white-space: nowrap; }
-a.rid:hover { background: var(--purple-bg); }
+/* 글 속 참조 링크: 번호 대신 이름을 보여준다 */
+a.rid { color: var(--purple); font-weight: 600; text-decoration: underline; text-decoration-style: dotted; text-decoration-color: var(--purple-line); text-underline-offset: 3px; }
+a.rid:hover { text-decoration-style: solid; text-decoration-color: var(--purple); }
+/* 제목 옆 번호: 찾을 때만 쓰도록 작고 흐리게 */
+.code { font-size: 11px; font-weight: 500; color: #9aa39e; letter-spacing: .01em; white-space: nowrap; margin-left: 4px; }
 .chip.sm { font-size: 11px; padding: 0 6px; border-radius: 6px; vertical-align: 1px; }
 .spec dd.pols { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
 .spec dd.pols .chip { white-space: normal; }

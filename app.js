@@ -9,15 +9,32 @@
   const demoHref = (key, n) => `#/demo/${key}${n ? "/" + n : ""}`;
   const findEl = (sc, n) => byId[sc].els.find((e) => e.n === n);
   const bullets = (items) => `<ul class="bullets">${items.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>`;
-  const polName = Object.fromEntries(POLICIES.map((p) => [p[0], p[1]]));
 
-  // 글 안의 번호(SC·F·R·P·C)는 링크로, `코드`는 코드 글꼴로, [제안]은 칩으로 바꾼다
+  // 번호(SC·F·R·P·C) → 사람이 읽는 이름. 글에는 이름만 보이고, 번호는 제목 옆에 작게만 둔다
+  const LABEL = {};
+  SCREENS.forEach((s) => {
+    LABEL[s.id] = `${s.short} 화면`;
+    s.els.forEach((e) => {
+      LABEL[`${s.id}/${e.n}`] = `${s.short} ${e.n} ${e.name}`;
+      e.p.forEach((f) => { LABEL[f.id] = f.name; });
+    });
+  });
+  RULES.forEach((r) => { LABEL[r[0]] = r[1]; });
+  POLICIES.forEach((p) => { LABEL[p[0]] = p[1]; });
+  Object.entries(CIDS).forEach(([k, c]) => { LABEL[k] = c.t; });
+  const label = (id) => LABEL[id] || id;
+  const elTag = (sc, n) => `${byId[sc].short} ${n}`;
+  const codeTag = (id) => `<span class="code">${id}</span>`;
+
+  // 글 안의 번호는 이름 링크로, `코드`는 코드 글꼴로, [제안]은 ‘기획 제안’ 표시로 바꾼다
   const ID_RE = /\b(SC-[A-Z]{3}-\d{2}(?:\/\d{2})?|F-[A-Z]{3}-\d{2}|C-[A-Z]{3}-\d{2}|[RP]-\d{2})\b/g;
   const idHref = (id) => (id.startsWith("SC-") ? docHref(...id.split("/")) : `#/doc/${id}`);
+  const idLink = (id, cls = "rid") => `<a class="${cls}" href="${idHref(id)}" title="${id}">${esc(label(id))}</a>`;
+  const SUGGEST = '<span class="chip amber sm">기획 제안</span>';
   const rich = (s) => esc(s)
     .replace(/`([^`]+)`/g, '<code class="c">$1</code>')
-    .replace(/\[제안\]\s*/g, '<span class="chip amber sm">제안</span> ')
-    .replace(ID_RE, (m) => `<a class="rid" href="${idHref(m)}">${m}</a>`);
+    .replace(/\[제안\]\s*/g, SUGGEST + " ")
+    .replace(ID_RE, (m) => idLink(m));
 
   // 항목 목록: 문자열 하나면 한 줄, 배열이면 개조식 목록. "개발 참고:"로 시작하면 따로 표시
   const DEV = "개발 참고:";
@@ -42,7 +59,7 @@
   function cidCard(code, withId) {
     const c = CIDS[code];
     return `<div class="cid${c.done ? " done-c" : ""}"${withId ? ` id="${code}"` : ""}>
-      <div class="cid-head"><span class="chip ${c.done ? "" : "amber"}">${code}</span>${esc(c.t)}${c.done ? '<span class="chip">반영됨</span>' : ""}</div>
+      <div class="cid-head">${esc(c.t)}${c.done ? '<span class="chip">반영됨</span>' : '<span class="chip amber">확인 필요</span>'}${codeTag(code)}</div>
       <dl class="cmp">${c.rows.map(([l, v]) => `<dt>${esc(l)}</dt><dd>${list(v)}</dd>`).join("")}</dl>
       <div class="pol">관련 정책: ${rich(c.pol)}</div></div>`;
   }
@@ -52,7 +69,7 @@
     const steps = FLOW.map((f, i) => {
       const s = byId[f.sc], el = findEl(f.sc, f.el);
       return `<article class="card step">
-        <div class="step-head"><span>${String(i + 1).padStart(2, "0")}</span><span class="chip purple">${f.sc}/${f.el}</span></div>
+        <div class="step-head"><span>${String(i + 1).padStart(2, "0")}</span><span class="chip purple">${elTag(f.sc, f.el)}</span></div>
         <h3>${esc(f.title)}</h3>
         ${thumb(s, el.boxes[0])}
         <p>${esc(f.desc)}</p>
@@ -62,18 +79,18 @@
     }).join("");
 
     const sides = [
-      { t: "담기 스낵바 → 장바구니", path: "상품 상세 ‘장바구니’ → 스낵바 ‘장바구니 보기’ → 장바구니", d: ["담기 완료 스낵바의 링크로 장바구니로 이동", "스낵바 위치 기준은 확인 필요 (C-CMP-03)"], chips: [["SC-DET-01/06", docHref("SC-DET-01", "06")], ["C-CMP-03", "#/doc/C-CMP-03"]], demo: demoHref("det", "06") },
-      { t: "필터 적용", path: "가격 비교 ‘저가격순’·‘모든 품질 등급’ → 필터 바텀시트 → ‘필터 적용하기’", d: ["바깥 어두운 부분 누름 → 적용 없이 닫힘", "바텀시트 프로토타입 연결은 디자인에서 추가 예정"], chips: [["SC-CMP-01/02", docHref("SC-CMP-01", "02")]], tag: "연결 예정", demo: demoHref("cmp", "02") },
-      { t: "보관", path: "가격 비교 보관 아이콘 → 눌림 상태 + 보관함 스낵바", d: ["보관함 스낵바는 잠시 뒤 자동으로 닫힘"], chips: [["SC-CMP-01/04", docHref("SC-CMP-01", "04")]], demo: demoHref("cmp", "04") },
-      { t: "Thanks to 안내·공감", path: "상품 상세 리뷰 ⓘ → Thanks to 툴팁 / 공감 → 눌림 상태", d: ["툴팁은 아이콘 바로 위에 뜸", "툴팁 바깥 누름 → 닫힘"], chips: [["SC-DET-01/05", docHref("SC-DET-01", "05")]], demo: demoHref("det", "05") },
+      { t: "담기 완료 알림 → 장바구니", path: "상품 상세 ‘장바구니’ → 완료 알림의 ‘장바구니 보기’ → 장바구니", d: ["담기 완료 알림의 링크로 장바구니로 이동", "알림 위치 기준은 확인 필요"], chips: ["SC-DET-01/06", "C-CMP-03"], demo: demoHref("det", "06") },
+      { t: "필터 적용", path: "가격 비교 ‘저가격순’·‘모든 품질 등급’ → 아래에서 필터 창 → ‘필터 적용하기’", d: ["바깥 어두운 부분 누름 → 적용 없이 닫힘", "필터 창 피그마 연결은 디자인에서 추가 예정"], chips: ["SC-CMP-01/02"], tag: "연결 예정", demo: demoHref("cmp", "02") },
+      { t: "보관", path: "가격 비교 보관 아이콘 → 눌린 모양 + 보관 완료 알림", d: ["보관 완료 알림은 잠시 뒤 자동으로 닫힘"], chips: ["SC-CMP-01/04"], demo: demoHref("cmp", "04") },
+      { t: "Thanks to 안내·공감", path: "상품 상세 리뷰 ⓘ → Thanks to 설명 말풍선 / 공감 → 눌린 모양", d: ["말풍선은 아이콘 바로 위에 뜸", "말풍선 바깥 누름 → 닫힘"], chips: ["SC-DET-01/05"], demo: demoHref("det", "05") },
       { t: "뒤로 가기", path: "장바구니 → 상품 상세 → 가격 비교 → 홈", d: ["화면 위 뒤로 아이콘으로 이전 화면으로"], chips: [], demo: demoHref("crt") },
-      { t: "금액 연결", path: "5,400원 + 일리아스 18,000원 + 배송비 3,500원 = 26,900원", d: ["가격 비교·상세·장바구니의 판매자·상태·금액이 모두 같음 (우나야하 · 중 · 64%)"], chips: [["C-CRT-02", "#/doc/C-CRT-02"], ["SC-CRT-01/02", docHref("SC-CRT-01", "02")]], demo: demoHref("crt", "02") }
+      { t: "금액 연결", path: "5,400원 + 일리아스 18,000원 + 배송비 3,500원 = 26,900원", d: ["가격 비교·상세·장바구니의 판매자·상태·금액이 모두 같음 (우나야하 · 중 · 64%)"], chips: ["C-CRT-02", "SC-CRT-01/02"], demo: demoHref("crt", "02") }
     ].map((m) => `<article class="card mini"><h3>${esc(m.t)}</h3><div class="path">${esc(m.path)}</div>${bullets(m.d)}
-        <div class="chips">${m.chips.map(([c, h]) => `<a class="chip purple" href="${h}">${c}</a>`).join("")}${m.tag ? `<span class="chip amber">${m.tag}</span>` : ""}<a class="chip line" href="${m.demo}">시연하기</a></div></article>`).join("");
+        <div class="chips">${m.chips.map((c) => idLink(c, "chip purple")).join("")}${m.tag ? `<span class="chip amber">${m.tag}</span>` : ""}<a class="chip line" href="${m.demo}">시연하기</a></div></article>`).join("");
 
     const screens = SCREENS.map((s) => `<article class="card screen-card">
         ${thumb(s, [0, 0, s.w, 260], 120, 180, false)}
-        <div><span class="chip">${s.id}</span><h3 style="margin-top:6px">${esc(s.name)}</h3><p>${esc(s.summary)}</p>
+        <div><h3>${esc(s.name)}</h3><p>${esc(s.summary)}</p>
           <div class="chips"><span class="chip purple">요소 ${s.els.length}개</span><span class="chip gray">기능 ${new Set(s.els.flatMap((e) => e.fns)).size}개</span></div>
           <div class="btns"><a class="btn small" href="${docHref(s.id)}">문서 보기</a><a class="btn small primary" href="${demoHref(s.key)}">시연하기</a></div></div>
       </article>`).join("");
@@ -87,8 +104,8 @@
 
       <section class="section">
         <h2>중고책 구매 핵심 흐름</h2>
-        <p class="muted">‘온라인 중고’의 &lt;소년이 온다&gt;를 사는 흐름 (피그마 프로토타입 기준)</p>
-        <div class="strip"><span>홈 · 온라인 중고</span><span class="arrow">→</span><span>가격 비교 · 판매 상품 고르기</span><span class="arrow">→</span><span>상품 상세 · 장바구니 담기</span><span class="arrow">→</span><span class="soft">스낵바 ‘장바구니 보기’</span><span class="arrow">→</span><span>장바구니 · 주문하기</span></div>
+        <p class="muted">‘온라인 중고’의 &lt;소년이 온다&gt;를 사는 흐름 (피그마에 연결된 순서 기준)</p>
+        <div class="strip"><span>홈 · 온라인 중고</span><span class="arrow">→</span><span>가격 비교 · 판매 상품 고르기</span><span class="arrow">→</span><span>상품 상세 · 장바구니 담기</span><span class="arrow">→</span><span class="soft">완료 알림 ‘장바구니 보기’</span><span class="arrow">→</span><span>장바구니 · 주문하기</span></div>
         <div class="grid steps">${steps}</div>
       </section>
 
@@ -106,12 +123,12 @@
 
       <section class="section card" style="padding:18px 20px">
         <h2>이번에 안 만드는 것 (보이기만 함)</h2>
-        <p class="muted" style="margin:0 0 6px;font-size:14px">디자인 메모 기준 · 화면에는 보이지만 눌러도 동작하지 않음 (R-06)</p>
+        <p class="muted" style="margin:0 0 6px;font-size:14px">디자인 메모 기준 · 화면에는 보이지만 눌러도 동작하지 않음</p>
         <ul class="scope-list">
-          <li>헤더 장바구니 숫자 배지: 담거나 지워도 숫자 그대로 (가격 비교·상품 상세·장바구니)</li>
-          <li>홈 배너: 이동·자동 넘김·재생/정지·페이지 버튼 동작 안 함 <a href="${docHref("SC-HOM-01", "02")}">SC-HOM-01/02</a></li>
-          <li>홈 퀵메뉴·‘혜택·기타’: 이동·펼치기 동작 안 함 <a href="${docHref("SC-HOM-01", "03")}">SC-HOM-01/03</a></li>
-          <li>이 책의 한 문장: 첫 문장만 고정, 화살표·‘자세히 보기’ 동작 안 함 <a href="${docHref("SC-HOM-01", "09")}">SC-HOM-01/09</a></li>
+          <li>맨 위 장바구니 아이콘의 숫자: 담거나 지워도 그대로 (가격 비교·상품 상세·장바구니)</li>
+          <li>홈 배너: 이동·자동 넘김·재생/정지·페이지 버튼 동작 안 함 ${idLink("SC-HOM-01/02")}</li>
+          <li>홈 바로가기 메뉴·‘혜택·기타’: 이동·펼치기 동작 안 함 ${idLink("SC-HOM-01/03")}</li>
+          <li>이 책의 한 문장: 첫 문장만 보여주고, 화살표·‘자세히 보기’ 동작 안 함 ${idLink("SC-HOM-01/09")}</li>
         </ul>
       </section>
     </div>${footer()}`;
@@ -122,13 +139,13 @@
   const F_ROWS = [["when", "실행 조건"], ["rule", "처리 규칙"], ["steps", "처리 순서"], ["scope", "이번에 안 만드는 것"], ["ok", "성공하면"], ["fail", "실패하면"]];
 
   function fnDoc(f) {
-    const head = `<div class="fn-name">${f.id} ${esc(f.name)}</div>`;
-    if (f.ref) return `<div class="fn">${head}<p class="ref">공통 기능 · 자세한 규칙은 ${rich(f.ref)}에 한 번만 적어 둠</p>${f.note ? list(f.note) : ""}</div>`;
+    const head = `<div class="fn-name">${esc(f.name)} ${codeTag(f.id)}</div>`;
+    if (f.ref) return `<div class="fn">${head}<p class="ref">여러 요소가 같이 쓰는 기능 · 자세한 규칙은 ${rich(f.ref)}에 적어 둠</p>${f.note ? list(f.note) : ""}</div>`;
     const rows = F_ROWS.filter(([k]) => f[k]).map(([k, l]) => {
       const v = k === "steps" ? `<ol class="steps-ol">${f.steps.map((t) => `<li>${rich(t)}</li>`).join("")}</ol>` : list(f[k]);
       return `<dt${k === "scope" ? ' class="scope"' : ""}>${l}</dt><dd>${v}</dd>`;
     }).join("");
-    const pol = f.pol ? `<dt>정해야 할 정책</dt><dd class="pols">${f.pol.map((p) => `<a class="chip amber" href="#/doc/${p}">${p} ${esc(polName[p] || "")}</a>`).join("")}</dd>` : "";
+    const pol = f.pol ? `<dt>아직 정해야 할 정책</dt><dd class="pols">${f.pol.map((p) => idLink(p, "chip amber")).join("")}</dd>` : "";
     return `<div class="fn" id="${f.id}">${head}<dl>${rows}${pol}</dl></div>`;
   }
 
@@ -143,8 +160,8 @@
       return `<dt${a}>${l}</dt><dd${a}>${list(e[k])}</dd>`;
     }).join("");
     return `<article class="el" id="${s.id}-${e.n}" data-sc="${s.id}" data-el="${e.n}">
-      <div class="el-head"><div class="el-title"><span class="id">${s.id}/${e.n}</span><h3>${esc(e.name)}</h3></div><a class="btn small" href="${demoHref(s.key, e.n)}">이 요소 시연</a></div>
-      <div class="chips">${e.fns.map((f) => `<span class="chip purple">${f}</span>`).join("")}${tags.join("")}</div>
+      <div class="el-head"><div class="el-title"><span class="id">${elTag(s.id, e.n)}</span><h3>${esc(e.name)}</h3>${codeTag(`${s.id}/${e.n}`)}</div><a class="btn small" href="${demoHref(s.key, e.n)}">이 요소 시연</a></div>
+      <div class="chips">${e.fns.map((f) => `<span class="chip purple">기능: ${esc(label(f))}</span>`).join("")}${tags.join("")}</div>
       <div class="print-only print-crop">${thumb(s, e.boxes[0], 230, 380)}</div>
       <div class="pair">
         <section class="spec green"><h4>화면설계서</h4><p class="sub">무엇이 보이고, 어떻게 움직이나</p><dl>${g}</dl></section>
@@ -167,30 +184,30 @@
     const PK = Math.min(300 / s.w, 860 / s.h), px = (v) => (v * PK).toFixed(1);
     const poBoxes = s.els.map((e) => e.boxes.map((b, i) => `<span class="po-box" style="left:${px(b[0])}px;top:${px(b[1])}px;width:${px(b[2])}px;height:${px(b[3])}px">${i === 0 ? `<span class="badge">${e.n}</span>` : ""}</span>`).join("")).join("");
     const overview = `<div class="print-only print-overview"><div class="po-shot" style="width:${px(s.w)}px;height:${px(s.h)}px"><img src="${s.img}" alt="${esc(s.name)} 화면" style="width:${px(s.w)}px;height:${px(s.h)}px">${poBoxes}</div><ol class="po-legend">${s.els.map((e) => `<li><b>${e.n}</b>${esc(e.name)}</li>`).join("")}</ol></div>`;
-    const extras = s.extras.length ? `<div class="box-section"><h3>따로 뜨는 화면 요소</h3><div class="extras">${s.extras.map((x) => `<div class="extra"><div class="img"><img src="${x.img}" alt="${esc(x.name)}" style="width:${Math.min(x.w, 300)}px"></div><b>${esc(x.name)}</b>${list(x.desc)}</div>`).join("")}</div></div>` : "";
+    const extras = s.extras.length ? `<div class="box-section"><h3>화면 위에 뜨는 창·알림</h3><div class="extras">${s.extras.map((x) => `<div class="extra"><div class="img"><img src="${x.img}" alt="${esc(x.name)}" style="width:${Math.min(x.w, 300)}px"></div><b>${esc(x.name)}</b>${list(x.desc)}</div>`).join("")}</div></div>` : "";
     const flowItem = (f) => {
       if (f.startsWith("[시연]")) return `<li class="proto"><span class="chip pink sm">시연 흐름</span> ${rich(f.slice(4).trim())}</li>`;
       if (f.startsWith("※")) return `<li class="scope">${rich(f.slice(1).trim())}</li>`;
       return `<li>${rich(f)}</li>`;
     };
     const states = `<tr class="head"><th>상태</th><th>언제</th><th>어떻게 보여주나</th></tr>`
-      + s.states.map(([name, when, how, sug]) => `<tr><th>${esc(name)}${sug ? ' <span class="chip amber sm">제안</span>' : ""}</th><td>${esc(when)}</td><td>${list(how)}</td></tr>`).join("");
+      + s.states.map(([name, when, how, sug]) => `<tr><th>${esc(name)}${sug ? " " + SUGGEST : ""}</th><td>${esc(when)}</td><td>${list(how)}</td></tr>`).join("");
     return `<section class="card screen" id="${s.id}" data-sc="${s.id}">
       <div class="screen-head">
-        <div><h2><span class="chip">${s.id}</span>${esc(s.name)}</h2><p>${esc(s.summary)}</p>
-          <dl class="meta"><dt>들어오는 곳</dt><dd>${s.entry.map(esc).join(" · ")}</dd><dt>디자인 원본</dt><dd>최종 디자인 · 피그마 프레임 ${s.source}</dd></dl></div>
+        <div><h2>${esc(s.name)}${codeTag(s.id)}</h2><p>${esc(s.summary)}</p>
+          <dl class="meta"><dt>들어오는 곳</dt><dd>${s.entry.map(esc).join(" · ")}</dd><dt>피그마 원본</dt><dd>최종 디자인 ${s.source}</dd></dl></div>
         <div><a class="btn" href="${demoHref(s.key)}">이 화면 시연</a></div>
       </div>
       ${overview}
       <div class="screen-body">
         <aside class="shot inline-shot" data-sc="${s.id}">
           <div class="shot-scroll"><div class="shot-canvas" style="width:${W}px;height:${Math.round(s.h * k)}px"><div class="shot-scale" style="transform:scale(${k})"><img src="${s.img}" alt="${esc(s.name)} 화면" loading="lazy" width="375" height="${s.h}">${boxesHtml(s)}</div></div></div>
-          <p class="hint">보라색 번호 선택 시 해당 명세로 이동</p>
+          <p class="hint">보라색 번호를 누르면 그 설명으로 이동</p>
         </aside>
         <div class="els">
           ${s.els.map((e) => elDoc(s, e)).join("")}
           <div class="box-section"><h3>사용자 이동 경로</h3><ul class="flowlist">${s.flow.map(flowItem).join("")}</ul></div>
-          <div class="box-section"><h3>상태별 화면 (빈 화면·오류·완료)</h3><p class="note" style="margin:0 0 6px">‘제안’ = 디자인에 아직 없어서 기획에서 제안하는 처리</p><div class="card" style="box-shadow:none;overflow-x:auto"><table class="table states">${states}</table></div></div>
+          <div class="box-section"><h3>상태별 화면 (빈 화면·오류·완료)</h3><p class="note" style="margin:0 0 6px">디자인에 아직 없는 화면은 ‘기획 제안’으로 표시</p><div class="card" style="box-shadow:none;overflow-x:auto"><table class="table states">${states}</table></div></div>
           <div class="box-section"><h3>기획안과 디자인이 다른 점</h3><div class="cids">${s.conf.map((c) => cidCard(c)).join("")}</div></div>
           ${extras}
         </div>
@@ -199,35 +216,35 @@
   }
 
   function commonDoc() {
-    const idmap = SCREENS.map((s) => `<div class="cid"><div class="cid-head"><span class="chip">${s.id}</span>${esc(s.name)}</div><ul>${s.els.map((e) => `<li><a href="${docHref(s.id, e.n)}"><b>${e.n}</b> ${esc(e.name)}</a><span class="muted">/ ${e.fns.join(", ")}</span></li>`).join("")}</ul></div>`).join("");
+    const idmap = SCREENS.map((s) => `<div class="cid"><div class="cid-head">${esc(s.name)}</div><ul>${s.els.map((e) => `<li><a href="${docHref(s.id, e.n)}"><b>${e.n}</b> ${esc(e.name)}</a><span class="muted">→ ${e.fns.map((f) => esc(label(f))).join(", ")}</span></li>`).join("")}</ul></div>`).join("");
     return `<section class="card common" id="common">
-      <h2>공통 규칙과 정해야 할 정책</h2><p class="muted" style="margin:0 0 12px;font-size:14px">여러 화면에 똑같이 적용되는 것</p>
-      <div class="rules">${RULES.map((r) => `<div class="rule" id="${r[0]}"><b>${r[0]} ${esc(r[1])}</b>${list(r[2])}</div>`).join("")}</div>
-      <div class="box-section" id="policies"><h3>P-01~P-15 · 아직 정해야 할 정책</h3><div class="card" style="box-shadow:none;overflow-x:auto"><table class="table"><tr class="head"><th>정책</th><th>정해야 할 것</th><th>누가</th><th>어떻게 정하나</th></tr>${POLICIES.map((p) => `<tr id="${p[0]}"><th><code>${p[0]}</code> ${esc(p[1])}</th><td>${list(p[2])}</td><td class="nowrap">${esc(p[3])}</td><td class="muted">${esc(p[4])}</td></tr>`).join("")}</table></div></div>
-      <div class="box-section" id="cids"><h3>기획안과 최종 디자인이 다른 점 (C)</h3><div class="cids">${Object.keys(CIDS).map((c) => cidCard(c, true)).join("")}</div></div>
-      <div class="box-section" id="idmap"><h3>화면·요소·기능 연결표</h3><div class="idmap">${idmap}</div></div>
+      <h2>공통 규칙과 아직 정해야 할 정책</h2><p class="muted" style="margin:0 0 12px;font-size:14px">여러 화면에 똑같이 적용되는 것</p>
+      <div class="rules">${RULES.map((r) => `<div class="rule" id="${r[0]}"><b>${esc(r[1])} ${codeTag(r[0])}</b>${list(r[2])}</div>`).join("")}</div>
+      <div class="box-section" id="policies"><h3>아직 정해야 할 정책 (${POLICIES.length}개)</h3><div class="card" style="box-shadow:none;overflow-x:auto"><table class="table"><tr class="head"><th>정책</th><th>정해야 할 것</th><th>누가</th><th>어떻게 정하나</th></tr>${POLICIES.map((p) => `<tr id="${p[0]}"><th>${esc(p[1])} ${codeTag(p[0])}</th><td>${list(p[2])}</td><td class="nowrap">${esc(p[3])}</td><td class="muted">${esc(p[4])}</td></tr>`).join("")}</table></div></div>
+      <div class="box-section" id="cids"><h3>기획안과 최종 디자인이 다른 점</h3><div class="cids">${Object.keys(CIDS).map((c) => cidCard(c, true)).join("")}</div></div>
+      <div class="box-section" id="idmap"><h3>화면별 요소·기능 목록</h3><div class="idmap">${idmap}</div></div>
       <div class="box-section" id="log"><h3>검토·결정 기록</h3><ul class="log">${LOG.map((l) => `<li><time>${l[0]}</time>${list(l[1])}</li>`).join("")}</ul>
-        <p class="note">새로 결정하면 함께 적기: 정책 번호 · 최종 문구·규칙 · 결정 이유 · 담당 · 결정일 · 관련 화면·기능 번호</p></div>
+        <p class="note">새로 결정하면 함께 적기: 정책 이름 · 최종 문구·규칙 · 결정 이유 · 담당 · 결정일 · 관련 화면·기능</p></div>
     </section>`;
   }
 
   const docState = { sc: null, el: null };
   function renderDoc() {
-    const finder = SCREENS.map((s) => `<div class="finder-row"><div class="label">${s.id} ${esc(s.short)}</div><div class="chips"><a class="chip sc-link" href="${docHref(s.id)}">${esc(s.short)} 화면</a>${s.els.map((e) => `<a class="chip purple" href="${docHref(s.id, e.n)}" title="${esc(e.name)}">${e.n}</a>`).join("")}</div></div>`).join("")
-      + `<div class="finder-row"><div class="label">공통</div><div class="chips"><a class="chip gray" href="#/doc/common">공통 규칙 R</a><a class="chip gray" href="#/doc/policies">정할 정책 P</a><a class="chip gray" href="#/doc/cids">다른 점 C</a><a class="chip gray" href="#/doc/idmap">연결표</a><a class="chip gray" href="#/doc/log">검토 기록</a></div></div>`;
+    const finder = SCREENS.map((s) => `<div class="finder-row"><div class="label">${esc(s.short)}</div><div class="chips"><a class="chip sc-link" href="${docHref(s.id)}">${esc(s.short)} 화면</a>${s.els.map((e) => `<a class="chip purple" href="${docHref(s.id, e.n)}" title="${esc(e.name)}">${e.n}</a>`).join("")}</div></div>`).join("")
+      + `<div class="finder-row"><div class="label">공통</div><div class="chips"><a class="chip gray" href="#/doc/common">공통 규칙</a><a class="chip gray" href="#/doc/policies">아직 정해야 할 정책</a><a class="chip gray" href="#/doc/cids">기획안과 다른 점</a><a class="chip gray" href="#/doc/idmap">요소·기능 목록</a><a class="chip gray" href="#/doc/log">검토 기록</a></div></div>`;
     app.innerHTML = `<div class="split doc-split">
       <aside class="split-left doc-left">
         <div class="seg" id="dseg">${SCREENS.map((s) => `<a href="${docHref(s.id)}" data-seg="${s.id}">${esc(s.short)}</a>`).join("")}</div>
         <div class="phone" id="dphone" data-reserve="84"><div class="phone-screen"><div class="scroller" id="dscroller"><div class="canvas-wrap" id="dwrap"><div class="canvas" id="dcanvas"></div></div></div></div></div>
-        <p class="hint">보라색 번호 선택 시 해당 명세로 이동</p>
+        <p class="hint">보라색 번호를 누르면 그 설명으로 이동</p>
       </aside>
       <div class="split-right" id="dright">
         <p class="eyebrow">문서 보기</p>
         <h1>화면과 명세 펼쳐 읽기</h1>
-        ${bullets(["화면 캡처의 보라색 번호 = 아래 명세의 요소 번호", "화면설계서(초록): 무엇이 보이고, 어떻게 움직이나", "기능명세서(보라): 언제, 무엇을 처리하고, 결과는 어떤가"])}
+        ${bullets(["화면 캡처의 보라색 번호 = 아래 설명의 요소 번호", "화면설계서: 무엇이 보이고, 어떻게 움직이나", "기능명세서: 언제, 무엇을 처리하고, 결과는 어떤가"])}
         <div class="btns"><a class="btn" href="#/flow">전체 흐름 보기</a><button class="btn" type="button" data-print>문서 인쇄</button></div>
         <div class="chips"><span class="chip">화면 4개</span><span class="chip purple">요소 ${ELS}개</span><span class="chip purple">기능 ${FNS}개</span></div>
-        <nav class="card finder" aria-label="화면 번호로 찾기"><h2>화면 번호로 찾기</h2>${finder}</nav>
+        <nav class="card finder" aria-label="화면 번호로 찾기"><h2>요소 번호로 찾기</h2>${finder}</nav>
         ${SCREENS.map(screenDoc).join("")}
         ${commonDoc()}
         ${footer()}
@@ -297,7 +314,7 @@
   let demoTimers = [];
   let barIO = null;
 
-  const actText = (a) => ({ go: `→ ${byKey[a.to]?.short ?? ""}`, sheet: "필터 바텀시트", cabinet: "보관함 스낵바", toggle: "눌림 상태", tooltip: "Thanks to 툴팁", cartSnack: "담기 스낵바" }[a.act]);
+  const actText = (a) => ({ go: `→ ${byKey[a.to]?.short ?? ""}`, sheet: "필터 창", cabinet: "보관 완료 알림", toggle: "눌린 모양", tooltip: "Thanks to 설명 말풍선", cartSnack: "담기 완료 알림" }[a.act]);
   const hotHtml = (a, attr = "data-hot") => `<button type="button" class="hot${state.pressed[a.key] ? " pressed" : ""}" ${attr}="${a.id}" style="left:${a.r[0]}px;top:${a.r[1]}px;width:${a.r[2]}px;height:${a.r[3]}px" aria-label="${esc(a.label)}"></button>`;
 
   function renderDemo(key, hl) {
@@ -326,10 +343,10 @@
 
     const actionList = acts.map((a) => `<button type="button" class="action" data-pulse="${a.id}"><b>${esc(a.label)}</b><span>${esc(actText(a))}</span>${a.note ? `<small>${esc(a.note)}</small>` : ""}</button>`).join("");
     const notes = {
-      crt: ["하단 고정 바: 본문 ‘결제 금액’이 보이면 숨김 (SC-CRT-01/04)", "‘주문하기’ 다음의 주문 단계는 프로토타입에 연결 안 됨"],
-      det: ["하단 바(장바구니·주문하기)는 화면 맨 아래 고정", "‘주문하기’·보관 아이콘은 프로토타입에 연결 안 됨"],
-      hom: ["배너·퀵메뉴·이 책의 한 문장: 이번에 안 만듦 (보이기만, R-06)"],
-      cmp: ["‘장바구니’·‘주문하기’ 버튼은 프로토타입에 연결 안 됨", "장바구니 담기는 상품 상세 화면에서 연결"]
+      crt: ["아래 주문 바: 본문 ‘결제 금액’이 보이면 숨김", "‘주문하기’ 다음의 주문 단계는 피그마에 연결 안 됨"],
+      det: ["아래 구매 바(장바구니·주문하기)는 화면 맨 아래에 붙어 있음", "‘주문하기’·보관 아이콘은 피그마에 연결 안 됨"],
+      hom: ["배너·바로가기 메뉴·이 책의 한 문장: 이번에 안 만듦 (보이기만 함)"],
+      cmp: ["‘장바구니’·‘주문하기’ 버튼은 피그마에 연결 안 됨", "장바구니 담기는 상품 상세 화면에서 연결"]
     }[s.key];
 
     app.innerHTML = `<div class="split demo-split">
@@ -342,7 +359,7 @@
             </div></div></div>
             ${fixbar}
             <div class="dim" id="dim"></div>
-            <div class="sheet" id="sheet"><div class="sheet-inner"><img src="${sh.img}" alt="필터 바텀시트">${sheetHots}</div></div>
+            <div class="sheet" id="sheet"><div class="sheet-inner"><img src="${sh.img}" alt="필터 창">${sheetHots}</div></div>
             <div class="snack" id="snackCart" style="bottom:calc(${snackBottom}px * var(--s))"><div class="snack-inner"><img src="${O.snackCart.img}" alt="상품이 장바구니에 담겼습니다. 장바구니 보기"><button type="button" class="hot" data-snack="cart" style="left:${O.snackCart.action[0]}px;top:${O.snackCart.action[1]}px;width:${O.snackCart.action[2]}px;height:${O.snackCart.action[3]}px" aria-label="장바구니 보기"></button></div></div>
             <div class="snack" id="snackCab" style="bottom:calc(${snackBottom}px * var(--s))"><div class="snack-inner"><img src="${O.snackCabinet.img}" alt="보관함에 담았습니다. 보관함 보기"></div></div>
             <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -351,17 +368,17 @@
       </div>
       <div class="split-right" id="pright">
         <p class="eyebrow">시연하기</p>
-        <h1>프로토타입 흐름 직접 시연</h1>
-        ${bullets(["피그마 프로토타입에 연결된 동작을 그대로 재현", "보라색 점선 영역을 누르면 다음 화면이나 창이 열림"])}
+        <h1>구매 흐름 직접 눌러 보기</h1>
+        ${bullets(["피그마에 연결해 둔 동작을 그대로 재현", "보라색 점선 영역을 누르면 다음 화면이나 창이 열림"])}
         <div class="demo-side">
           <section class="card panel">
-            <h2><span class="chip">${s.id}</span>${esc(s.name)}</h2>
+            <h2>${esc(s.name)}</h2>
             <p>${esc(s.summary)}</p>
             <div class="btns" style="margin:12px 0 0"><a class="btn small" href="${docHref(s.id)}">이 화면 문서 보기</a><a class="btn small" href="${demoHref("hom", "10")}">처음부터</a></div>
           </section>
           <section class="card panel">
             <h3>핵심 흐름</h3>
-            <ol class="progress">${FLOW.map((f, i) => `<li class="${i < stepIdx ? "past" : i === stepIdx ? "now" : ""}"><span class="num">${i + 1}</span><span>${esc(f.title)}<small>${f.sc}/${f.el}</small></span></li>`).join("")}</ol>
+            <ol class="progress">${FLOW.map((f, i) => `<li class="${i < stepIdx ? "past" : i === stepIdx ? "now" : ""}"><span class="num">${i + 1}</span><span>${esc(f.title)}<small>${elTag(f.sc, f.el)}</small></span></li>`).join("")}</ol>
           </section>
           <section class="card panel">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px"><h3 style="margin:0">누를 수 있는 영역</h3><label class="toggle"><input type="checkbox" id="hotToggle"${state.showHot ? " checked" : ""}>영역 표시</label></div>
@@ -463,26 +480,26 @@
     closeTips();
     switch (a.act) {
       case "go":
-        log(`${a.label} → ${byKey[a.to].id} ${byKey[a.to].short}`);
+        log(`${a.label} → ${byKey[a.to].short}`);
         location.hash = demoHref(a.to);
         break;
       case "toggle": {
         const k = key + ":" + id;
         state.pressed[k] = !state.pressed[k];
         document.querySelectorAll(`[data-hot="${id}"]`).forEach((h) => h.classList.toggle("pressed", state.pressed[k]));
-        log(`${a.label} → ${state.pressed[k] ? "눌림" : "기본"} 상태`);
+        log(`${a.label} → ${state.pressed[k] ? "눌린" : "기본"} 모양`);
         if (a.note) toast(a.note);
         break;
       }
       case "sheet":
         openSheet(true);
-        log(`${a.label} → 필터 바텀시트 열림`);
+        log(`${a.label} → 필터 창 열림`);
         break;
       case "cabinet": {
         state.pressed[key + ":" + id] = true;
         el.classList.add("pressed");
         showSnack("snackCab", 3000);
-        log(`${a.label} → 눌림 상태 + 보관함 스낵바`);
+        log(`${a.label} → 눌린 모양 + 보관 완료 알림`);
         break;
       }
       case "tooltip": {
@@ -492,12 +509,12 @@
         t.style.left = `${a.r[0] + a.r[2] / 2 - T.tailX - 3.5}px`;
         t.style.top = `${a.r[1] - T.h - 2}px`;
         document.getElementById("canvas").appendChild(t);
-        log(`${a.label} → Thanks to 툴팁`);
+        log(`${a.label} → Thanks to 설명 말풍선`);
         break;
       }
       case "cartSnack":
         showSnack("snackCart", 4500);
-        log(`${a.label} → 장바구니 담기 스낵바`);
+        log(`${a.label} → 담기 완료 알림`);
         break;
     }
   }
@@ -507,7 +524,7 @@
     if (cmd === "half") { state.sheet.half = !state.sheet.half; syncSheet(); return; }
     if (cmd === "tab0") { toast("정렬 순서 옵션은 디자인에 없음"); return; }
     if (cmd === "tab1") return;
-    if (cmd === "reset") { state.sheet = { opt: 0, half: false }; syncSheet(); toast("선택 초기화(적용 전)"); log("필터 바텀시트 → 초기화"); return; }
+    if (cmd === "reset") { state.sheet = { opt: 0, half: false }; syncSheet(); toast("선택 초기화(적용 전)"); log("필터 창 → 초기화"); return; }
     if (cmd === "apply") {
       openSheet(false);
       const msg = `필터 적용: ${OPTS[state.sheet.opt]}${state.sheet.half ? " · 반값택배만" : ""}`;
@@ -542,8 +559,8 @@
     if (hot) { doAction(hot.dataset.hot, hot); return; }
     const sh = t.closest("[data-sheet]");
     if (sh) { sheetAction(sh.dataset.sheet); return; }
-    if (t.closest("[data-snack]")) { log("스낵바 ‘장바구니 보기’ → SC-CRT-01 장바구니"); location.hash = demoHref("crt"); return; }
-    if (t.id === "dim") { openSheet(false); toast("적용 없이 닫힘"); log("바깥 어두운 부분 → 바텀시트 닫힘 (적용 안 함)"); return; }
+    if (t.closest("[data-snack]")) { log("알림의 ‘장바구니 보기’ → 장바구니"); location.hash = demoHref("crt"); return; }
+    if (t.id === "dim") { openSheet(false); toast("적용 없이 닫힘"); log("바깥 어두운 부분 → 필터 창 닫힘 (적용 안 함)"); return; }
     const p = t.closest("[data-pulse]");
     if (p) { pulse(p.dataset.pulse); return; }
     const f = t.closest("[data-focus]");
