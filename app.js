@@ -124,7 +124,7 @@
   }
 
   /* ---------------- 문서 보기 ---------------- */
-  const G_ROWS = [["show", "화면에 보이는 것"], ["act", "동작"], ["memo", "디자인 메모"]];
+  const G_ROWS = [["role", "역할"], ["show", "화면에 보이는 것"], ["act", "동작"], ["memo", "디자인 메모"]];
   const F_ROWS = [["when", "실행 조건"], ["rule", "처리 규칙"], ["steps", "처리 순서"], ["ok", "성공하면"], ["fail", "실패하면"]];
 
   function fnDoc(f) {
@@ -144,7 +144,7 @@
     if (e.flowStep) tags.push('<span class="chip pink">핵심 흐름</span>');
     if (e.memo) tags.push('<span class="chip gray">디자인 메모 있음</span>');
     const g = G_ROWS.filter(([k]) => e[k]).map(([k, l]) => {
-      const a = k === "memo" ? ' class="annot"' : "";
+      const a = k === "memo" ? ' class="annot"' : k === "role" ? ' class="role"' : "";
       return `<dt${a}>${l}</dt><dd${a}>${list(e[k])}</dd>`;
     }).join("");
     return `<article class="el" id="${s.id}-${e.n}" data-sc="${s.id}" data-el="${e.n}">
