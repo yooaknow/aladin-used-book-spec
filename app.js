@@ -140,7 +140,7 @@
     if (st === "view" || st === "off") {
       return `<div class="fn" id="${f.id}" data-st="${st}">${head}<p class="off-line">동작하지 않음${st === "view" ? " · 화면에 보이기만 함" : ""}</p>${plannedBox(`<dl>${rows}</dl>${extra}`)}</div>`;
     }
-    return `<div class="fn" id="${f.id}" data-st="${st}">${head}<dl>${rows}</dl>${plannedBox(extra)}</div>`;
+    return `<div class="fn" id="${f.id}" data-st="${st}">${head}<dl>${rows}</dl>${picsHtml(f)}${plannedBox(extra)}</div>`;
   }
 
   // 요소에서 동작하는 것 / 동작하지 않는 것
@@ -150,7 +150,7 @@
     return `<div class="impl">${on}${im.noop.length || !im.works.length ? off : ""}</div>`;
   }
 
-  // 요소 설명 안에 같이 보여줄 그림 (예: 장바구니 화면 아래 주문 바)
+  // 기능 설명 안에 같이 보여줄 그림 (예: 장바구니 하단 주문 바 표시)
   const picsHtml = (e) => e.pics ? `<div class="el-pics">${e.pics.map((p) => `<figure><div class="img"><img src="${p.img}" alt="${esc(p.cap)}" style="width:${Math.min(p.w, 300)}px" loading="lazy"></div><figcaption>${esc(p.cap)}</figcaption></figure>`).join("")}</div>` : "";
 
   function elDoc(s, e) {
@@ -168,7 +168,7 @@
       <div class="chips">${e.fns.map((f) => `<span class="chip purple">기능: ${esc(label(f))}</span>`).join("")}${tags.join("")}</div>
       <div class="print-only print-crop">${thumb(s, e.boxes[0], 230, 380)}</div>
       <div class="pair">
-        <section class="spec green"><h4>화면설계서</h4><p class="sub">무엇이 보이고, 어떻게 움직이나</p><dl>${g}</dl>${picsHtml(e)}${plannedBox(e.planned && list(e.planned))}</section>
+        <section class="spec green"><h4>화면설계서</h4><p class="sub">무엇이 보이고, 어떻게 움직이나</p><dl>${g}</dl>${plannedBox(e.planned && list(e.planned))}</section>
         <section class="spec purple"><h4>기능명세서</h4><p class="sub">무엇이 동작하고, 어떻게 처리하나</p>${implBox(im)}${e.p.map(fnDoc).join("")}</section>
       </div>
     </article>`;
