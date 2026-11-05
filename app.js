@@ -562,6 +562,9 @@
   app.addEventListener("click", (ev) => {
     const t = ev.target;
     if (t.closest("[data-print]")) { printDoc(); return; }
+    // 지금 주소와 같은 문서 링크(같은 화면 탭 다시 누름 등)도 그 위치로 다시 이동
+    const same = t.closest("a[href^=\"#/doc/\"]");
+    if (same && same.getAttribute("href") === location.hash) { ev.preventDefault(); route(); return; }
     const box = t.closest(".box");
     if (box) {
       const sc = box.closest(".inline-shot") ? box.closest(".inline-shot").dataset.sc : docState.sc, n = box.dataset.el;
@@ -601,6 +604,19 @@
   window.addEventListener("resize", () => { fitPhones(); if (current === "doc") onDocScroll(); });
   window.addEventListener("scroll", () => { if (current === "doc" && !isSplit()) onDocScroll(); }, { passive: true });
 
+  // 문서 보기 안 이동: 화면으로 갈 땐 그 화면 바로 위 체크박스까지 보이게 (홈은 문서 맨 위 체크박스)
+  function docScrollTo(target) {
+    const el = document.getElementById(target);
+    if (!el) return;
+    let to = el;
+    if (el.matches(".screen")) {
+      const prev = el.previousElementSibling;
+      if (prev && prev.matches(".screen-tools")) to = prev;
+      else if (el === document.querySelector("#dright .screen")) to = document.querySelector("#dright .doc-tools") || el;
+    }
+    to.scrollIntoView({ block: "start" });
+  }
+
   let current = null;
   function route() {
     const parts = location.hash.replace(/^#\/?/, "").split("/");
@@ -611,7 +627,7 @@
       if (current !== "doc") { renderDoc(); window.scrollTo(0, 0); }
       current = "doc";
       const target = parts[1] ? (parts[2] ? `${parts[1]}-${parts[2]}` : parts[1]) : null;
-      if (target) requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: "start" }));
+      if (target) requestAnimationFrame(() => docScrollTo(target));
     } else if (view === "demo") {
       const first = current !== "demo";
       current = "demo";
