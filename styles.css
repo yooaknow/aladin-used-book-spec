@@ -426,9 +426,13 @@ a.rid:hover { text-decoration-style: solid; text-decoration-color: var(--purple)
 
   /* 화면 1개 = 개요 1페이지(화면 전체 + 번호 목록) → 요소별 명세 */
   .screen { break-before: page; border: 0; padding: 0; margin: 0; border-radius: 0; }
+  /* 첫 장: 문서 제목 바로 아래에 홈 화면을 이어서 (제목만 있는 빈 장이 생기지 않게) */
+  .split-right > .eyebrow { display: none; }
+  .split-right > h1 { margin: 0 0 10px; font-size: 18px; }
+  .split-right > .screen:first-of-type { break-before: auto; }
   .screen-head { break-after: avoid; }
   .print-overview { display: flex; gap: 20px; align-items: flex-start; margin-top: 14px; break-inside: avoid; break-after: page; }
-  .screen-head .btn, .only-working-check, .screen-tools { display: none; }
+  .screen-head .btn, .only-working-check, .screen-tools, .doc-tools { display: none; }
   .po-shot { position: relative; flex: none; border: 1px solid var(--line); border-radius: 6px; background: #fff; break-inside: avoid; }
   .po-shot img { display: block; border-radius: 6px; }
   .po-box { position: absolute; border: 1.5px solid var(--purple); border-radius: 4px; }

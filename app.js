@@ -191,7 +191,7 @@
     const W = 276, k = W / s.w;
     // 인쇄 전용: 화면 전체를 한 페이지 높이에 맞춘 개요 + 요소 번호 목록
     // (transform 없이 축소 좌표로 직접 배치해야 인쇄 시 박스가 다음 페이지로 밀리지 않음)
-    const PK = Math.min(300 / s.w, 860 / s.h), px = (v) => (v * PK).toFixed(1);
+    const PK = Math.min(300 / s.w, 820 / s.h), px = (v) => (v * PK).toFixed(1);
     const poBoxes = s.els.map((e) => e.boxes.map((b, i) => `<span class="po-box" style="left:${px(b[0])}px;top:${px(b[1])}px;width:${px(b[2])}px;height:${px(b[3])}px">${i === 0 ? `<span class="badge">${e.n}</span>` : ""}</span>`).join("")).join("");
     const overview = `<div class="print-only print-overview"><div class="po-shot" style="width:${px(s.w)}px;height:${px(s.h)}px"><img src="${s.img}" alt="${esc(s.name)} 화면" style="width:${px(s.w)}px;height:${px(s.h)}px">${poBoxes}</div><ol class="po-legend">${s.els.map((e) => `<li><b>${e.n}</b>${esc(e.name)}</li>`).join("")}</ol></div>`;
     const extras = s.extras.length ? `<div class="box-section"><h3>화면 위에 뜨는 창·알림</h3><div class="extras">${s.extras.map((x) => `<div class="extra"><div class="img"><img src="${x.img}" alt="${esc(x.name)}" style="width:${Math.min(x.w, 300)}px"></div><b>${esc(x.name)}</b>${list(x.desc)}</div>`).join("")}</div></div>` : "";
