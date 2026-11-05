@@ -216,12 +216,12 @@ a.chip:hover { filter: brightness(.96); }
 .tip { position: absolute; width: 137px; height: 40px; pointer-events: none; filter: drop-shadow(0 4px 8px rgba(0,0,0,.15)); }
 .dim { position: absolute; inset: 0; background: rgba(0, 0, 0, .5); opacity: 0; pointer-events: none; transition: opacity .2s; }
 .dim.on { opacity: 1; pointer-events: auto; }
-.sheet { position: absolute; left: 0; bottom: 0; width: calc(375px * var(--s)); height: calc(453px * var(--s)); transform: translateY(105%); transition: transform .25s ease; }
+.sheet { position: absolute; left: 0; bottom: 0; width: calc(375px * var(--s)); height: calc(450px * var(--s)); transform: translateY(105%); transition: transform .25s ease; }
 .sheet.on { transform: none; }
-.sheet-inner { position: absolute; left: 0; top: 0; width: 375px; height: 453px; transform: scale(var(--s)); transform-origin: 0 0; }
-.sheet-inner img { width: 375px; height: 453px; border-radius: 8px 8px 0 0; }
+.sheet-inner { position: absolute; left: 0; top: 0; width: 375px; height: 450px; transform: scale(var(--s)); transform-origin: 0 0; }
+.sheet-inner img { width: 375px; height: 450px; border-radius: 8px 8px 0 0; }
 .sheet .hot.sel { background: rgba(235, 33, 124, .10); box-shadow: inset 4px 0 0 var(--pink); }
-.snack { position: absolute; left: calc(16px * var(--s)); width: calc(343px * var(--s)); opacity: 0; transform: translateY(12px); transition: opacity .2s, transform .2s; pointer-events: none; }
+.snack { position: absolute; left: calc(16px * var(--s)); width: calc(343px * var(--s)); height: calc(52px * var(--s)); opacity: 0; transform: translateY(12px); transition: opacity .2s, transform .2s; pointer-events: none; }
 .snack.on { opacity: 1; transform: none; pointer-events: auto; }
 .snack-inner { position: relative; width: 343px; height: 52px; transform: scale(var(--s)); transform-origin: 0 0; }
 .snack-inner img { width: 343px; height: 52px; }

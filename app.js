@@ -10,7 +10,7 @@
   const demoHref = (key, n) => `#/demo/${key}${n ? "/" + n : ""}`;
   const findEl = (sc, n) => byId[sc].els.find((e) => e.n === n);
   const bullets = (items) => `<ul class="bullets">${items.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>`;
-  const footer = () => `<footer class="foot">화면설계서+기능명세서 ver1.0 · 최종 Redesign(5845:8476) 기준 · 2026.11.03 · 합동세미나 모바일 웹 3조 · 알라딘 공식 서비스가 아닌 학습용 리디자인 문서</footer>`;
+  const footer = () => `<footer class="foot">화면설계서+기능명세서 ver1.0 · 1104 update) Redesign(6091:8696) 기준 · 2026.11.05 · 합동세미나 모바일 웹 3조 · 알라딘 공식 서비스가 아닌 학습용 리디자인 문서</footer>`;
   const isSplit = () => window.innerWidth > 1020;
 
   function thumb(s, b, w = 210, maxH = 170, hl = true) {
@@ -268,11 +268,11 @@
     const stepIdx = FLOW.findIndex((f) => f.sc === s.id);
     let fixbar = "";
     if (s.key === "det") {
-      fixbar = `<div class="fixbar" id="fixbar" style="height:calc(73px * var(--s))"><div class="fixbar-inner" style="height:73px;background:url(${s.img}) 0 -3001px / 375px ${s.h}px no-repeat">${hotHtml({ id: "cart", r: [64, 17, 144, 40], label: "하단 ‘장바구니’", key: "det:cartfix" })}</div></div>`;
+      fixbar = `<div class="fixbar" id="fixbar" style="height:calc(73px * var(--s))"><div class="fixbar-inner" style="height:73px;background:url(${s.img}) 0 -${s.h - 73}px / 375px ${s.h}px no-repeat">${hotHtml({ id: "cart", r: [64, 17, 144, 40], label: "하단 ‘장바구니’", key: "det:cartfix" })}</div></div>`;
     } else if (s.key === "crt") {
-      fixbar = `<div class="fixbar" id="fixbar" style="height:calc(115px * var(--s))"><div class="fixbar-inner" style="height:115px"><img src="${O.bottombar.img}" alt="선택 상품 총 2종 2개 26,900원 주문하기" style="position:absolute;left:-${O.bottombar.padX}px;top:-${O.bottombar.padTop}px;width:${O.bottombar.w}px;height:${O.bottombar.h}px"></div></div>`;
+      fixbar = `<div class="fixbar" id="fixbar" style="height:calc(110px * var(--s))"><div class="fixbar-inner" style="height:110px"><img src="${O.bottombar.img}" alt="선택 상품 총 2종 2개 26,900원 주문하기" style="position:absolute;left:-${O.bottombar.padX}px;top:-${O.bottombar.padTop}px;width:${O.bottombar.w}px;height:${O.bottombar.h}px"></div></div>`;
     }
-    const snackBottom = s.key === "det" ? 73 + 12 : 24;
+    const snackBottom = s.key === "det" ? 73 + 24 : 24;
     const sh = O.sheet;
     const sheetHots = [
       ...sh.tabs.map((r, i) => `<button type="button" class="hot" data-sheet="tab${i}" style="left:${r[0]}px;top:${r[1]}px;width:${r[2]}px;height:${r[3]}px" aria-label="${i ? "품질 등급" : "정렬 순서"} 탭"></button>`),
