@@ -326,7 +326,7 @@
   let demoTimers = [];
   let barIO = null;
 
-  const actText = (a) => ({ go: `→ ${byKey[a.to]?.short ?? ""}`, sheet: "필터 창", cabinet: "보관 완료 알림", toggle: "눌린 모양", tooltip: "Thanks to 설명 말풍선", cartSnack: "담기 완료 알림" }[a.act]);
+  const actText = (a) => ({ go: `→ ${byKey[a.to]?.short ?? ""}`, sheet: "필터 창", cabinet: "보관 완료 알림", toggle: "눌린 모양", tooltip: "Thanks to 설명 말풍선", cartSnack: "담기 완료 알림", noop: "동작하지 않음" }[a.act]);
   const hotHtml = (a, attr = "data-hot") => `<button type="button" class="hot${state.pressed[a.key] ? " pressed" : ""}" ${attr}="${a.id}" style="left:${a.r[0]}px;top:${a.r[1]}px;width:${a.r[2]}px;height:${a.r[3]}px" aria-label="${esc(a.label)}"></button>`;
 
   function renderDemo(key, hl) {
@@ -527,6 +527,11 @@
       case "cartSnack":
         showSnack("snackCart", 4500);
         log(`${a.label} → 담기 완료 알림`);
+        break;
+      case "noop":
+        // 눌러도 아무 일 없음 (카드 아래로 눌림이 번져 상세로 넘어가지 않게 이 영역에서 멈춤)
+        toast("동작하지 않음");
+        log(`${a.label} → 동작하지 않음`);
         break;
     }
   }
