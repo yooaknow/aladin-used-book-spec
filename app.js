@@ -120,30 +120,19 @@
         <p class="muted">화면마다 요소별로 화면설계서·기능명세서를 나란히 정리</p>
         <div class="grid two">${screens}</div>
       </section>
-
-      <section class="section card" style="padding:18px 20px">
-        <h2>이번에 안 만드는 것 (보이기만 함)</h2>
-        <p class="muted" style="margin:0 0 6px;font-size:14px">디자인 메모 기준 · 화면에는 보이지만 눌러도 동작하지 않음</p>
-        <ul class="scope-list">
-          <li>맨 위 장바구니 아이콘의 숫자: 담거나 지워도 그대로 (가격 비교·상품 상세·장바구니)</li>
-          <li>홈 배너: 이동·자동 넘김·재생/정지·페이지 버튼 동작 안 함 ${idLink("SC-HOM-01/02")}</li>
-          <li>홈 바로가기 메뉴·‘혜택·기타’: 이동·펼치기 동작 안 함 ${idLink("SC-HOM-01/03")}</li>
-          <li>이 책의 한 문장: 첫 문장만 보여주고, 화살표·‘자세히 보기’ 동작 안 함 ${idLink("SC-HOM-01/09")}</li>
-        </ul>
-      </section>
     </div>${footer()}`;
   }
 
   /* ---------------- 문서 보기 ---------------- */
   const G_ROWS = [["show", "화면에 보이는 것"], ["act", "동작"], ["memo", "디자인 메모"]];
-  const F_ROWS = [["when", "실행 조건"], ["rule", "처리 규칙"], ["steps", "처리 순서"], ["scope", "이번에 안 만드는 것"], ["ok", "성공하면"], ["fail", "실패하면"]];
+  const F_ROWS = [["when", "실행 조건"], ["rule", "처리 규칙"], ["steps", "처리 순서"], ["ok", "성공하면"], ["fail", "실패하면"]];
 
   function fnDoc(f) {
     const head = `<div class="fn-name">${esc(f.name)} ${codeTag(f.id)}</div>`;
     if (f.ref) return `<div class="fn">${head}<p class="ref">여러 요소가 같이 쓰는 기능 · 자세한 규칙은 ${rich(f.ref)}에 적어 둠</p>${f.note ? list(f.note) : ""}</div>`;
     const rows = F_ROWS.filter(([k]) => f[k]).map(([k, l]) => {
       const v = k === "steps" ? `<ol class="steps-ol">${f.steps.map((t) => `<li>${rich(t)}</li>`).join("")}</ol>` : list(f[k]);
-      return `<dt${k === "scope" ? ' class="scope"' : ""}>${l}</dt><dd>${v}</dd>`;
+      return `<dt>${l}</dt><dd>${v}</dd>`;
     }).join("");
     const pol = f.pol ? `<dt>아직 정해야 할 정책</dt><dd class="pols">${f.pol.map((p) => idLink(p, "chip amber")).join("")}</dd>` : "";
     return `<div class="fn" id="${f.id}">${head}<dl>${rows}${pol}</dl></div>`;
@@ -153,7 +142,6 @@
     const tags = [];
     if (e.flowStart) tags.push('<span class="chip pink">흐름 시작</span>');
     if (e.flowStep) tags.push('<span class="chip pink">핵심 흐름</span>');
-    if (e.notBuilt) tags.push('<span class="chip amber">이번에 안 만듦 (보이기만)</span>');
     if (e.memo) tags.push('<span class="chip gray">디자인 메모 있음</span>');
     const g = G_ROWS.filter(([k]) => e[k]).map(([k, l]) => {
       const a = k === "memo" ? ' class="annot"' : "";
@@ -187,7 +175,6 @@
     const extras = s.extras.length ? `<div class="box-section"><h3>화면 위에 뜨는 창·알림</h3><div class="extras">${s.extras.map((x) => `<div class="extra"><div class="img"><img src="${x.img}" alt="${esc(x.name)}" style="width:${Math.min(x.w, 300)}px"></div><b>${esc(x.name)}</b>${list(x.desc)}</div>`).join("")}</div></div>` : "";
     const flowItem = (f) => {
       if (f.startsWith("[시연]")) return `<li class="proto"><span class="chip pink sm">시연 흐름</span> ${rich(f.slice(4).trim())}</li>`;
-      if (f.startsWith("※")) return `<li class="scope">${rich(f.slice(1).trim())}</li>`;
       return `<li>${rich(f)}</li>`;
     };
     const states = `<tr class="head"><th>상태</th><th>언제</th><th>어떻게 보여주나</th></tr>`
@@ -344,7 +331,7 @@
     const notes = {
       crt: ["아래 주문 바: 본문 ‘결제 금액’이 보이면 숨김", "‘주문하기’ 다음의 주문 단계는 피그마에 연결 안 됨"],
       det: ["아래 구매 바(장바구니·주문하기)는 화면 맨 아래에 붙어 있음", "‘주문하기’·보관 아이콘은 피그마에 연결 안 됨"],
-      hom: ["배너·바로가기 메뉴·이 책의 한 문장: 이번에 안 만듦 (보이기만 함)"],
+      hom: [],
       cmp: ["‘장바구니’·‘주문하기’ 버튼은 피그마에 연결 안 됨", "장바구니 담기는 상품 상세 화면에서 연결"]
     }[s.key];
 
@@ -382,7 +369,7 @@
           <section class="card panel">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px"><h3 style="margin:0">누를 수 있는 영역</h3><label class="toggle"><input type="checkbox" id="hotToggle"${state.showHot ? " checked" : ""}>영역 표시</label></div>
             <div class="actions">${actionList}</div>
-            <div class="note" style="margin-top:10px">${bullets(notes)}</div>
+            ${notes.length ? `<div class="note" style="margin-top:10px">${bullets(notes)}</div>` : ""}
             <h3 style="margin-top:16px">요소 위치 보기</h3>
             <div class="chips">${s.els.map((e) => `<a class="chip purple" data-focus="${e.n}" title="${esc(e.name)}">${e.n}</a>`).join("")}</div>
           </section>

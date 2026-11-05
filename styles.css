@@ -97,8 +97,6 @@ a.chip:hover { filter: brightness(.96); }
 .screen-card .thumb { height: 180px; }
 .screen-card p { margin: 4px 0 8px; color: var(--muted); font-size: 14px; }
 .screen-card .btns { margin: 8px 0 0; gap: 6px; }
-.scope-list { margin: 0; padding-left: 20px; color: var(--muted); font-size: 14px; }
-.scope-list li { margin: 3px 0; }
 
 /* ---------- doc view ---------- */
 .finder { padding: 16px 18px; margin-top: 6px; }
@@ -147,7 +145,6 @@ a.chip:hover { filter: brightness(.96); }
 .spec dd { margin: 1px 0 0; font-size: 14px; }
 .spec dt.annot { color: #b5155c; }
 .spec dd.annot { background: #fff; border-left: 3px solid var(--pink); border-radius: 0 8px 8px 0; padding: 7px 10px; }
-.spec dt.scope + dd { background: #fff; border-left: 3px solid var(--amber); border-radius: 0 8px 8px 0; padding: 7px 10px; }
 .fn { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--purple-line); }
 .fn:first-of-type { margin-top: 4px; padding-top: 0; border-top: 0; }
 .fn-name { font-weight: 800; color: var(--purple); font-size: 14px; }
@@ -185,7 +182,6 @@ a.rid:hover { text-decoration-style: solid; text-decoration-color: var(--purple)
 .flowlist { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
 .flowlist li { padding: 8px 12px; border-radius: 9px; background: var(--green-bg); font-size: 14px; }
 .flowlist li.proto { background: var(--pink-bg); }
-.flowlist li.scope { background: var(--amber-bg); }
 .table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .table th, .table td { text-align: left; vertical-align: top; padding: 8px 12px; border-top: 1px solid var(--line); }
 .table th { font-weight: 700; white-space: nowrap; }
