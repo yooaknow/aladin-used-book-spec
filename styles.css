@@ -152,8 +152,31 @@ a.chip:hover { filter: brightness(.96); }
 .fn:first-of-type { margin-top: 4px; padding-top: 0; border-top: 0; }
 .fn-name { font-weight: 800; color: var(--purple); font-size: 14px; }
 .fn .ref { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
-.done { margin-top: 12px; padding: 11px 14px; border-radius: 10px; background: #f4f6f5; font-size: 14px; }
-.done b { display: block; font-size: 13px; margin-bottom: 1px; }
+/* 개조식 목록 */
+.dots { margin: 2px 0 0; padding-left: 17px; }
+.dots li { margin: 1px 0; padding-left: 1px; }
+.dots li.dev { list-style: none; margin: 6px 0 0 -17px; padding: 4px 8px; border-radius: 7px; background: rgba(0, 0, 0, .035); font-size: 13px; color: var(--muted); }
+.dots li.dev b { color: var(--text); font-size: 12px; margin-right: 4px; }
+.one { margin: 1px 0 0; }
+.steps-ol { margin: 2px 0 0; padding-left: 20px; }
+.steps-ol li { margin: 1px 0; }
+code.c { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 12px; background: #fff; border: 1px solid var(--line); padding: 0 5px; border-radius: 5px; white-space: nowrap; }
+a.rid { font-size: .86em; font-weight: 700; color: var(--purple); background: #fff; border: 1px solid var(--purple-line); padding: 0 5px; border-radius: 5px; text-decoration: none; white-space: nowrap; }
+a.rid:hover { background: var(--purple-bg); }
+.chip.sm { font-size: 11px; padding: 0 6px; border-radius: 6px; vertical-align: 1px; }
+.spec dd.pols { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+.spec dd.pols .chip { white-space: normal; }
+.table tr.head th { font-size: 12px; color: var(--muted); font-weight: 700; }
+.table .dots { margin: 0; }
+.table td.nowrap { white-space: nowrap; }
+.table.states th { white-space: nowrap; }
+.cid dl.cmp { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 8px 0 0; font-size: 13.5px; }
+.cid dl.cmp dt { font-weight: 700; color: var(--muted); font-size: 12.5px; padding-top: 2px; }
+.cid dl.cmp dd { margin: 0; }
+.cid dl.cmp .dots { margin: 0; }
+.rule .dots { font-size: 13.5px; margin: 0; }
+.log li .dots { margin: 0; }
+.extra .dots { font-size: 13px; color: var(--muted); text-align: left; }
 .box-section { margin-top: 22px; }
 .box-section h3 { font-size: 15px; margin-bottom: 8px; }
 .flowlist { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
