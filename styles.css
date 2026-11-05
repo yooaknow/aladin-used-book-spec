@@ -256,6 +256,11 @@ a.rid:hover { text-decoration-style: solid; text-decoration-color: var(--purple)
 .cid p { margin: 4px 0 0; font-size: 13.5px; }
 .cid .pol { margin-top: 4px; font-size: 12.5px; color: var(--muted); }
 .cid.done-c { background: #f7fbf8; }
+.el-pics { margin-top: 12px; display: grid; gap: 8px; }
+.el-pics figure { margin: 0; }
+.el-pics .img { background: #fff; border: 1px solid var(--green-line); border-radius: 10px; padding: 10px; display: grid; place-items: center; }
+.el-pics img { max-width: 100%; height: auto; }
+.el-pics figcaption { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
 .extras { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
 .extra { padding: 12px; border-radius: 10px; border: 1px solid var(--line); background: #fff; }
 .extra .img { background: #eef0ef; border-radius: 9px; padding: 10px; display: grid; place-items: center; }
