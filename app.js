@@ -87,7 +87,6 @@
       <div class="flow-head">
         <p class="eyebrow">전체 흐름 보기</p>
         <h1>중고책 구매 흐름 한눈에 보기</h1>
-        ${bullets(["홈 ‘온라인 중고’ → 가격 비교 → 상품 상세 → 장바구니 순서", "단계마다 ‘문서 보기’와 ‘시연하기’로 바로 이동"])}
         <div class="btns"><a class="btn" href="#/doc">명세 전체 읽기</a><a class="btn primary" href="${demoHref("hom", "09")}">시연 이어보기</a></div>
         <div class="chips"><span class="chip">화면 4개</span><span class="chip purple">요소 ${ELS}개</span><span class="chip purple">기능 ${FNS}개</span></div>
       </div>
