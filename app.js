@@ -118,6 +118,10 @@
     off: '<span class="chip st-off">동작하지 않음</span>'
   };
   const elStatus = (im) => (!im.works.length ? "off" : im.noop.length ? "part" : "on");
+  const stOf = (s, e) => elStatus(IMPL[`${s.id}/${e.n}`] || { works: [], noop: [] });
+  // ‘동작하는 것만 보기’ 상태 (문서 보기를 다시 그려도 유지)
+  let onlyWorking = false;
+  const WORKING_COUNT = SCREENS.reduce((n, s) => n + s.els.filter((e) => stOf(s, e) !== "off").length, 0);
 
   // 원래 기획한 기능: 개발할 내용과 헷갈리지 않게 연한 회색으로 접어 둔다
   const plannedBox = (body) => (body ? `<details class="planned"><summary>원래 기획한 기능 (참고용)</summary>${body}</details>` : "");
@@ -133,9 +137,9 @@
     const extra = f.planned ? list(f.planned) : "";
     // 동작하지 않는 기능은 "동작하지 않음"만 보이고, 원래 기획은 회색 칸에 접어 둔다
     if (st === "view" || st === "off") {
-      return `<div class="fn" id="${f.id}">${head}<p class="off-line">동작하지 않음${st === "view" ? " · 화면에 보이기만 함" : ""}</p>${plannedBox(`<dl>${rows}</dl>${extra}`)}</div>`;
+      return `<div class="fn" id="${f.id}" data-st="${st}">${head}<p class="off-line">동작하지 않음${st === "view" ? " · 화면에 보이기만 함" : ""}</p>${plannedBox(`<dl>${rows}</dl>${extra}`)}</div>`;
     }
-    return `<div class="fn" id="${f.id}">${head}<dl>${rows}</dl>${plannedBox(extra)}</div>`;
+    return `<div class="fn" id="${f.id}" data-st="${st}">${head}<dl>${rows}</dl>${plannedBox(extra)}</div>`;
   }
 
   // 요소에서 동작하는 것 / 동작하지 않는 것
@@ -155,7 +159,7 @@
       const a = k === "memo" ? ' class="annot"' : k === "role" ? ' class="role"' : "";
       return `<dt${a}>${l}</dt><dd${a}>${list(e[k])}</dd>`;
     }).join("");
-    return `<article class="el" id="${s.id}-${e.n}" data-sc="${s.id}" data-el="${e.n}">
+    return `<article class="el" id="${s.id}-${e.n}" data-sc="${s.id}" data-el="${e.n}" data-st="${elStatus(im)}">
       <div class="el-head"><div class="el-title"><span class="id">${elTag(s.id, e.n)}</span><h3>${esc(e.name)}</h3>${codeTag(`${s.id}/${e.n}`)}</div><a class="btn small" href="${demoHref(s.key, e.n)}">이 요소 시연</a></div>
       <div class="chips">${e.fns.map((f) => `<span class="chip purple">기능: ${esc(label(f))}</span>`).join("")}${tags.join("")}</div>
       <div class="print-only print-crop">${thumb(s, e.boxes[0], 230, 380)}</div>
@@ -170,7 +174,7 @@
   function boxesHtml(s) {
     return s.els.flatMap((e) => e.boxes.map((b, i) => ({ e, b, i })))
       .sort((a, b) => b.b[2] * b.b[3] - a.b[2] * a.b[3])
-      .map(({ e, b, i }) => `<button type="button" class="box" data-el="${e.n}" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]}px;height:${b[3]}px" aria-label="${e.n} ${esc(e.name)} 명세로 이동">${i === 0 ? `<span class="badge">${e.n}</span>` : ""}</button>`).join("");
+      .map(({ e, b, i }) => `<button type="button" class="box" data-el="${e.n}" data-st="${stOf(s, e)}" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]}px;height:${b[3]}px" aria-label="${e.n} ${esc(e.name)} 명세로 이동">${i === 0 ? `<span class="badge">${e.n}</span>` : ""}</button>`).join("");
   }
 
   function screenDoc(s) {
@@ -216,9 +220,9 @@
 
   const docState = { sc: null, el: null };
   function renderDoc() {
-    const finder = SCREENS.map((s) => `<div class="finder-row"><div class="label">${esc(s.short)}</div><div class="chips"><a class="chip sc-link" href="${docHref(s.id)}">${esc(s.short)} 화면</a>${s.els.map((e) => `<a class="chip purple" href="${docHref(s.id, e.n)}"><b>${e.n}</b> ${esc(e.name)}</a>`).join("")}</div></div>`).join("")
+    const finder = SCREENS.map((s) => `<div class="finder-row"><div class="label">${esc(s.short)}</div><div class="chips"><a class="chip sc-link" href="${docHref(s.id)}">${esc(s.short)} 화면</a>${s.els.map((e) => `<a class="chip purple" href="${docHref(s.id, e.n)}" data-st="${stOf(s, e)}"><b>${e.n}</b> ${esc(e.name)}</a>`).join("")}</div></div>`).join("")
       + `<div class="finder-row"><div class="label">목록·기록</div><div class="chips"><a class="chip gray" href="#/doc/idmap">요소·기능 목록</a><a class="chip gray" href="#/doc/log">검토 기록</a></div></div>`;
-    app.innerHTML = `<div class="split doc-split">
+    app.innerHTML = `<div class="split doc-split${onlyWorking ? " only-working" : ""}">
       <aside class="split-left doc-left">
         <div class="seg" id="dseg">${SCREENS.map((s) => `<a href="${docHref(s.id)}" data-seg="${s.id}">${esc(s.short)}</a>`).join("")}</div>
         <div class="phone" id="dphone" data-reserve="84"><div class="phone-screen"><div class="scroller" id="dscroller"><div class="canvas-wrap" id="dwrap"><div class="canvas" id="dcanvas"></div></div></div></div></div>
@@ -228,7 +232,7 @@
         <p class="eyebrow">문서 보기</p>
         <h1>화면과 명세 펼쳐 읽기</h1>
         ${bullets(["화면 캡처의 보라색 번호 = 아래 설명의 요소 번호", "화면설계서: 무엇이 보이고, 어떻게 움직이나", "기능명세서: 언제, 무엇을 처리하고, 결과는 어떤가"])}
-        <div class="btns"><a class="btn" href="#/flow">전체 흐름 보기</a><button class="btn" type="button" data-print>문서 인쇄</button></div>
+        <div class="btns"><button class="btn toggle-working${onlyWorking ? " on" : ""}" type="button" data-only-working aria-pressed="${onlyWorking}">${onlyWorking ? "전체 보기" : `동작하는 것만 보기 (${WORKING_COUNT}개)`}</button><a class="btn" href="#/flow">전체 흐름 보기</a><button class="btn" type="button" data-print>문서 인쇄</button></div>
         <details class="card finder" aria-label="요소 번호로 찾기"><summary><h2>요소 번호로 찾기</h2><span class="finder-hint">화면 4개 · 요소 ${ELS}개 · 기능 ${FNS}개</span></summary><div class="finder-body">${finder}</div></details>
         ${SCREENS.map(screenDoc).join("")}
         ${commonDoc()}
@@ -288,7 +292,8 @@
       if (pane) setDocScreen(cur || SCREENS[0].id);
       if (!cur) return;
       let el = null;
-      document.querySelectorAll(`.el[data-sc="${cur}"]`).forEach((a) => { if (a.getBoundingClientRect().top - base <= 200) el = a.dataset.el; });
+      // 숨겨진 요소(동작하는 것만 보기)는 건너뛴다
+      document.querySelectorAll(`.el[data-sc="${cur}"]`).forEach((a) => { if (a.offsetParent && a.getBoundingClientRect().top - base <= 200) el = a.dataset.el; });
       if (el) setDocEl(cur, el);
     }, 60);
   }
@@ -538,6 +543,17 @@
   app.addEventListener("click", (ev) => {
     const t = ev.target;
     if (t.closest("[data-print]")) { printDoc(); return; }
+    const ow = t.closest("[data-only-working]");
+    if (ow) {
+      onlyWorking = !onlyWorking;
+      document.querySelector(".doc-split")?.classList.toggle("only-working", onlyWorking);
+      ow.classList.toggle("on", onlyWorking);
+      ow.setAttribute("aria-pressed", String(onlyWorking));
+      ow.textContent = onlyWorking ? "전체 보기" : `동작하는 것만 보기 (${WORKING_COUNT}개)`;
+      docState.el = null;
+      onDocScroll();
+      return;
+    }
     const box = t.closest(".box");
     if (box) {
       const sc = box.closest(".inline-shot") ? box.closest(".inline-shot").dataset.sc : docState.sc, n = box.dataset.el;

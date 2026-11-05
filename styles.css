@@ -116,6 +116,14 @@ a.chip:hover { filter: brightness(.96); }
 .finder-row .label { padding-top: 4px; font-size: 13px; font-weight: 700; color: var(--muted); }
 .finder .chip { padding: 4px 10px; border: 1px solid var(--purple-line); background: #fff; font-weight: 600; }
 .finder .chip b { font-weight: 800; margin-right: 2px; }
+/* 동작하는 것만 보기: 동작 없는 요소, 동작하지 않는 기능·목록을 숨김 */
+.btn.toggle-working.on { background: var(--green); border-color: var(--green); color: #fff; }
+.only-working .el[data-st="off"],
+.only-working .box[data-st="off"],
+.only-working .finder .chip[data-st="off"],
+.only-working .impl-off,
+.only-working .fn[data-st="off"],
+.only-working .fn[data-st="view"] { display: none; }
 .finder .chip.sc-link { border-color: var(--green-line); color: var(--green); }
 
 .screen { margin-top: 28px; padding: 20px 22px; }
