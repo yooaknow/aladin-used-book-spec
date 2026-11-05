@@ -40,6 +40,8 @@ main { outline: none; }
 .brand-sub { font-size: 12px; line-height: 1.4; color: var(--muted); }
 .brand-sub em { font-style: normal; font-weight: 700; color: var(--text); background: #f0f2f1; border-radius: 5px; padding: 0 5px; margin-left: 4px; font-size: 11px; }
 .brand-title { font-size: 16px; line-height: 1.35; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* 좁은 화면에서는 제목이 잘리지 않고 두 줄로 */
+@media (max-width: 720px) { .brand-title { white-space: normal; font-size: 15px; } }
 .tabs { max-width: var(--max); margin: 0 auto; padding: 0 24px; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
 .tabs a { flex: none; padding: 7px 12px 9px; text-decoration: none; font-weight: 600; font-size: 14px; color: var(--muted); border-bottom: 3px solid transparent; }
