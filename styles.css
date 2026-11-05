@@ -430,6 +430,8 @@ a.rid:hover { text-decoration-style: solid; text-decoration-color: var(--purple)
   .split-right > .eyebrow { display: none; }
   .split-right > h1 { margin: 0 0 10px; font-size: 18px; }
   .split-right > .screen:first-of-type { break-before: auto; }
+  /* 검토·결정 기록은 화면에서만 보고 인쇄에는 넣지 않음 */
+  #log { display: none; }
   .screen-head { break-after: avoid; }
   .print-overview { display: flex; gap: 20px; align-items: flex-start; margin-top: 14px; break-inside: avoid; break-after: page; }
   .screen-head .btn, .only-working-check, .screen-tools, .doc-tools { display: none; }
