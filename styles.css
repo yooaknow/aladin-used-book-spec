@@ -141,6 +141,8 @@ a.chip:hover { filter: brightness(.96); }
 .screen-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
 .screen-head h2 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 19px; }
 .screen-head p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+/* 화면 칸 오른쪽 위: ‘이 화면 시연’ 버튼 아래 체크박스 */
+.screen-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
 .meta { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 10px 0 0; font-size: 13px; }
 .meta dt { font-weight: 700; color: var(--muted); }
 .meta dd { margin: 0; }
@@ -420,7 +422,7 @@ a.rid:hover { text-decoration-style: solid; text-decoration-color: var(--purple)
   .screen { break-before: page; border: 0; padding: 0; margin: 0; border-radius: 0; }
   .screen-head { break-after: avoid; }
   .print-overview { display: flex; gap: 20px; align-items: flex-start; margin-top: 14px; break-inside: avoid; break-after: page; }
-  .screen-head .btn { display: none; }
+  .screen-head .btn, .only-working-check { display: none; }
   .po-shot { position: relative; flex: none; border: 1px solid var(--line); border-radius: 6px; background: #fff; break-inside: avoid; }
   .po-shot img { display: block; border-radius: 6px; }
   .po-box { position: absolute; border: 1.5px solid var(--purple); border-radius: 4px; }

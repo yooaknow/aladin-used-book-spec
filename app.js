@@ -122,6 +122,8 @@
   // ‘동작하는 것만 보기’ 상태 (문서 보기를 다시 그려도 유지)
   let onlyWorking = false;
   const WORKING_COUNT = SCREENS.reduce((n, s) => n + s.els.filter((e) => stOf(s, e) !== "off").length, 0);
+  // 맨 위와 화면마다 같은 체크박스를 두고 서로 연동한다
+  const workingCheck = (total, working) => `<label class="only-working-check"><input type="checkbox" data-only-working${onlyWorking ? " checked" : ""}><span>동작이 있는 기능만 보기</span><small>${total}개 중 ${working}개</small></label>`;
 
   // 원래 기획한 기능: 개발할 내용과 헷갈리지 않게 연한 회색으로 접어 둔다
   const plannedBox = (body) => (body ? `<details class="planned"><summary>원래 기획한 기능 (참고용)</summary>${body}</details>` : "");
@@ -206,7 +208,7 @@
       <div class="screen-head">
         <div><h2>${esc(s.name)}${codeTag(s.id)}</h2><p>${esc(s.summary)}</p>
           <dl class="meta"><dt>들어오는 곳</dt><dd>${s.entry.map(esc).join(" · ")}</dd><dt>피그마 원본</dt><dd>최종 디자인 ${s.source}</dd></dl></div>
-        <div><a class="btn" href="${demoHref(s.key)}">이 화면 시연</a></div>
+        <div class="screen-actions"><a class="btn" href="${demoHref(s.key)}">이 화면 시연</a>${workingCheck(s.els.length, s.els.filter((e) => stOf(s, e) !== "off").length)}</div>
       </div>
       ${overview}
       <div class="screen-body">
@@ -245,7 +247,7 @@
         <p class="eyebrow">문서 보기</p>
         <h1>화면설계서, 기능명세서</h1>
         <div class="doc-tools">
-          <label class="only-working-check"><input type="checkbox" data-only-working${onlyWorking ? " checked" : ""}><span>동작이 있는 기능만 보기</span><small>${ELS}개 중 ${WORKING_COUNT}개</small></label>
+          ${workingCheck(ELS, WORKING_COUNT)}
         </div>
         <details class="card finder" aria-label="요소 번호로 찾기"><summary><h2>요소 번호로 찾기</h2><span class="finder-hint">화면 4개 · 요소 ${ELS}개 · 기능 ${FNS}개</span></summary><div class="finder-body">${finder}</div></details>
         ${SCREENS.map(screenDoc).join("")}
@@ -580,7 +582,10 @@
     // 동작하는 것만 보기 체크박스
     if (ev.target.matches("[data-only-working]")) {
       onlyWorking = ev.target.checked;
+      document.querySelectorAll("[data-only-working]").forEach((c) => { c.checked = onlyWorking; });
       document.querySelector(".doc-split")?.classList.toggle("only-working", onlyWorking);
+      // 화면 칸 안의 체크박스를 눌렀으면 위쪽 내용이 줄어도 그 화면에 머물게
+      ev.target.closest(".screen")?.scrollIntoView({ block: "start" });
       docState.el = null;
       onDocScroll();
       return;
