@@ -230,9 +230,12 @@
       </aside>
       <div class="split-right" id="dright">
         <p class="eyebrow">문서 보기</p>
-        <h1>화면과 명세 펼쳐 읽기</h1>
+        <h1>화면설계서, 기능명세서</h1>
         ${bullets(["화면 캡처의 보라색 번호 = 아래 설명의 요소 번호", "화면설계서: 무엇이 보이고, 어떻게 움직이나", "기능명세서: 언제, 무엇을 처리하고, 결과는 어떤가"])}
-        <div class="btns"><button class="btn toggle-working${onlyWorking ? " on" : ""}" type="button" data-only-working aria-pressed="${onlyWorking}">${onlyWorking ? "전체 보기" : `동작하는 것만 보기 (${WORKING_COUNT}개)`}</button><a class="btn" href="#/flow">전체 흐름 보기</a><button class="btn" type="button" data-print>문서 인쇄</button></div>
+        <div class="doc-tools">
+          <div class="btns"><a class="btn" href="#/flow">전체 흐름 보기</a><button class="btn" type="button" data-print>문서 인쇄</button></div>
+          <label class="only-working-check"><input type="checkbox" data-only-working${onlyWorking ? " checked" : ""}><span>동작하는 것만 보기</span><small>${ELS}개 중 ${WORKING_COUNT}개</small></label>
+        </div>
         <details class="card finder" aria-label="요소 번호로 찾기"><summary><h2>요소 번호로 찾기</h2><span class="finder-hint">화면 4개 · 요소 ${ELS}개 · 기능 ${FNS}개</span></summary><div class="finder-body">${finder}</div></details>
         ${SCREENS.map(screenDoc).join("")}
         ${commonDoc()}
@@ -543,17 +546,6 @@
   app.addEventListener("click", (ev) => {
     const t = ev.target;
     if (t.closest("[data-print]")) { printDoc(); return; }
-    const ow = t.closest("[data-only-working]");
-    if (ow) {
-      onlyWorking = !onlyWorking;
-      document.querySelector(".doc-split")?.classList.toggle("only-working", onlyWorking);
-      ow.classList.toggle("on", onlyWorking);
-      ow.setAttribute("aria-pressed", String(onlyWorking));
-      ow.textContent = onlyWorking ? "전체 보기" : `동작하는 것만 보기 (${WORKING_COUNT}개)`;
-      docState.el = null;
-      onDocScroll();
-      return;
-    }
     const box = t.closest(".box");
     if (box) {
       const sc = box.closest(".inline-shot") ? box.closest(".inline-shot").dataset.sc : docState.sc, n = box.dataset.el;
@@ -574,6 +566,14 @@
     if (!t.closest(".tip")) closeTips();
   });
   app.addEventListener("change", (ev) => {
+    // 동작하는 것만 보기 체크박스
+    if (ev.target.matches("[data-only-working]")) {
+      onlyWorking = ev.target.checked;
+      document.querySelector(".doc-split")?.classList.toggle("only-working", onlyWorking);
+      docState.el = null;
+      onDocScroll();
+      return;
+    }
     if (ev.target.id === "hotToggle") {
       state.showHot = ev.target.checked;
       document.getElementById("phone").classList.toggle("show-hot", state.showHot);

@@ -120,7 +120,14 @@ a.chip:hover { filter: brightness(.96); }
 .finder .chip { padding: 4px 10px; border: 1px solid var(--purple-line); background: #fff; font-weight: 600; }
 .finder .chip b { font-weight: 800; margin-right: 2px; }
 /* 동작하는 것만 보기: 동작 없는 요소, 동작하지 않는 기능·목록을 숨김 */
-.btn.toggle-working.on { background: var(--green); border-color: var(--green); color: #fff; }
+/* 체크박스: 버튼 줄과 따로, 켜면 초록 테두리 */
+/* 문서 보기 위쪽 한 줄: 왼쪽 버튼, 오른쪽 체크박스 (높이 38px로 맞춤) */
+.doc-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; margin: 16px 0 0; }
+.doc-tools .btns { margin: 0; }
+.only-working-check { display: inline-flex; align-items: center; gap: 8px; min-height: 38px; font-size: 14px; font-weight: 700; cursor: pointer; user-select: none; }
+.only-working-check input { width: 18px; height: 18px; margin: 0; accent-color: var(--green); cursor: pointer; }
+.only-working-check small { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.only-working-check:has(input:checked) span { color: var(--green); }
 .only-working .el[data-st="off"],
 .only-working .box[data-st="off"],
 .only-working .finder .chip[data-st="off"],
