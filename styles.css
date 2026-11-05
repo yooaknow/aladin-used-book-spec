@@ -152,6 +152,9 @@ a.chip:hover { filter: brightness(.96); }
 .shot .hint { margin: 8px 4px 0; font-size: 12px; color: var(--muted); }
 .box { position: absolute; border: 2px solid var(--purple); border-radius: 8px; background: transparent; cursor: pointer; padding: 0; transition: background .15s, box-shadow .15s; }
 .box:hover, .box.on { background: rgba(92, 56, 163, .12); box-shadow: 0 0 0 3px rgba(92, 56, 163, .18); }
+/* 눌러서 동작하는 곳: 초록 점선 (누르는 건 아래 보라 테두리가 받도록 통과) */
+.hotmark { position: absolute; border: 3px dashed var(--green); border-radius: 8px; box-shadow: 0 0 0 2px rgba(255, 255, 255, .85); pointer-events: none; }
+.hint-hot { color: var(--green); font-weight: 700; }
 .badge { position: absolute; right: -9px; top: -9px; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 11px; background: var(--purple); color: #fff; font-size: 11px; font-weight: 800; display: grid; place-items: center; box-shadow: 0 0 0 2px #fff; }
 
 .el { padding: 18px 0 22px; border-top: 1px solid var(--line); }

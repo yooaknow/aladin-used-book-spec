@@ -174,7 +174,20 @@
   function boxesHtml(s) {
     return s.els.flatMap((e) => e.boxes.map((b, i) => ({ e, b, i })))
       .sort((a, b) => b.b[2] * b.b[3] - a.b[2] * a.b[3])
-      .map(({ e, b, i }) => `<button type="button" class="box" data-el="${e.n}" data-st="${stOf(s, e)}" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]}px;height:${b[3]}px" aria-label="${e.n} ${esc(e.name)} 명세로 이동">${i === 0 ? `<span class="badge">${e.n}</span>` : ""}</button>`).join("");
+      .map(({ e, b, i }) => `<button type="button" class="box" data-el="${e.n}" data-st="${stOf(s, e)}" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]}px;height:${b[3]}px" aria-label="${e.n} ${esc(e.name)} 명세로 이동">${i === 0 ? `<span class="badge">${e.n}</span>` : ""}</button>`).join("")
+      + hotMarks(s);
+  }
+
+  // 요소 안에서 실제로 눌러서 동작하는 곳 (시연 영역 기준) → 초록 점선
+  // 요소 테두리와 거의 같은 크기면 겹쳐 보이기만 해서 뺀다
+  function hotMarks(s) {
+    return (DEMO[s.key] || []).filter((a) => {
+      if (!a.el || a.act === "noop") return false;
+      const e = findEl(s.id, a.el);
+      if (!e) return false;
+      const b = e.boxes[0];
+      return a.r[2] * a.r[3] < 0.8 * b[2] * b[3];
+    }).map((a) => `<span class="hotmark" data-el="${a.el}" style="left:${a.r[0]}px;top:${a.r[1]}px;width:${a.r[2]}px;height:${a.r[3]}px" title="${esc(a.label)}"></span>`).join("");
   }
 
   function screenDoc(s) {
@@ -199,7 +212,7 @@
       <div class="screen-body">
         <aside class="shot inline-shot" data-sc="${s.id}">
           <div class="shot-scroll"><div class="shot-canvas" style="width:${W}px;height:${Math.round(s.h * k)}px"><div class="shot-scale" style="transform:scale(${k})"><img src="${s.img}" alt="${esc(s.name)} 화면" loading="lazy" width="375" height="${s.h}">${boxesHtml(s)}</div></div></div>
-          <p class="hint">보라색 번호를 누르면 그 설명으로 이동</p>
+          <p class="hint">보라색 번호를 누르면 그 설명으로 이동 · <span class="hint-hot">초록 점선</span> = 눌러서 동작하는 곳</p>
         </aside>
         <div class="els">
           ${s.els.map((e) => elDoc(s, e)).join("")}
@@ -226,7 +239,7 @@
       <aside class="split-left doc-left">
         <div class="seg" id="dseg">${SCREENS.map((s) => `<a href="${docHref(s.id)}" data-seg="${s.id}">${esc(s.short)}</a>`).join("")}</div>
         <div class="phone" id="dphone" data-reserve="84"><div class="phone-screen"><div class="scroller" id="dscroller"><div class="canvas-wrap" id="dwrap"><div class="canvas" id="dcanvas"></div></div></div></div></div>
-        <p class="hint">보라색 번호를 누르면 그 설명으로 이동</p>
+        <p class="hint">보라색 번호를 누르면 그 설명으로 이동 · <span class="hint-hot">초록 점선</span> = 눌러서 동작하는 곳</p>
       </aside>
       <div class="split-right" id="dright">
         <p class="eyebrow">문서 보기</p>
