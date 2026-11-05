@@ -81,8 +81,8 @@
     app.innerHTML = `<div class="wrap">
       <p class="eyebrow">전체 흐름 보기</p>
       <h1>중고책 구매 흐름 한눈에 보기</h1>
-      ${bullets(["홈 ‘온라인 중고’ → 가격 비교 → 상품 상세 → 장바구니 순서", "단계마다 ‘문서 보기’와 ‘시연하기’로 바로 이동", "번호(SC·F·P 등)나 용어가 낯설면 → ‘번호·용어 읽는 법’"])}
-      <div class="btns"><a class="btn" href="#/doc">명세 전체 읽기</a><a class="btn" href="#/doc/guide">번호·용어 읽는 법</a><a class="btn primary" href="${demoHref("hom", "10")}">시연 이어보기</a></div>
+      ${bullets(["홈 ‘온라인 중고’ → 가격 비교 → 상품 상세 → 장바구니 순서", "단계마다 ‘문서 보기’와 ‘시연하기’로 바로 이동"])}
+      <div class="btns"><a class="btn" href="#/doc">명세 전체 읽기</a><a class="btn primary" href="${demoHref("hom", "10")}">시연 이어보기</a></div>
       <div class="chips"><span class="chip">화면 4개</span><span class="chip purple">요소 ${ELS}개</span><span class="chip purple">기능 ${FNS}개</span></div>
 
       <section class="section">
@@ -211,28 +211,10 @@
     </section>`;
   }
 
-  function guideDoc() {
-    return `<section class="card guide" id="guide">
-      <h2>처음 읽는다면</h2>
-      <div class="guide-grid">
-        <div><h3>번호 읽는 법</h3><table class="table">${ID_GUIDE.map(([id, name, d]) => `<tr><th><code>${id}</code></th><td><b>${esc(name)}</b><br><span class="muted">${esc(d)}</span></td></tr>`).join("")}</table></div>
-        <div><h3>용어 풀이</h3><dl class="gloss">${GLOSSARY.map(([t, d]) => `<dt>${esc(t)}</dt><dd>${esc(d)}</dd>`).join("")}</dl></div>
-      </div>
-      <h3>요소 하나는 이렇게 읽어요</h3>
-      <ul class="dots">
-        <li><b class="g">초록 = 화면설계서</b>: 화면에 보이는 것 → 동작 → 디자인 메모</li>
-        <li><b class="p">보라 = 기능명세서</b>: 실행 조건 → 처리 규칙 → 성공하면 / 실패하면 → 정해야 할 정책</li>
-        <li><b class="k">분홍 ‘디자인 메모’</b> = 디자이너가 피그마에 남긴 메모, 그 안의 ‘개발 참고’ = 개발에 필요한 값</li>
-        <li>노란 <span class="chip amber sm">제안</span> = 디자인에 아직 없어서 기획에서 제안하는 내용</li>
-        <li>글 속 번호(예: <a class="rid" href="#/doc/P-01">P-01</a>)를 누르면 그 내용으로 바로 이동</li>
-      </ul>
-    </section>`;
-  }
-
   const docState = { sc: null, el: null };
   function renderDoc() {
     const finder = SCREENS.map((s) => `<div class="finder-row"><div class="label">${s.id} ${esc(s.short)}</div><div class="chips"><a class="chip sc-link" href="${docHref(s.id)}">${esc(s.short)} 화면</a>${s.els.map((e) => `<a class="chip purple" href="${docHref(s.id, e.n)}" title="${esc(e.name)}">${e.n}</a>`).join("")}</div></div>`).join("")
-      + `<div class="finder-row"><div class="label">공통</div><div class="chips"><a class="chip gray" href="#/doc/guide">번호·용어 읽는 법</a><a class="chip gray" href="#/doc/common">공통 규칙 R</a><a class="chip gray" href="#/doc/policies">정할 정책 P</a><a class="chip gray" href="#/doc/cids">다른 점 C</a><a class="chip gray" href="#/doc/idmap">연결표</a><a class="chip gray" href="#/doc/log">검토 기록</a></div></div>`;
+      + `<div class="finder-row"><div class="label">공통</div><div class="chips"><a class="chip gray" href="#/doc/common">공통 규칙 R</a><a class="chip gray" href="#/doc/policies">정할 정책 P</a><a class="chip gray" href="#/doc/cids">다른 점 C</a><a class="chip gray" href="#/doc/idmap">연결표</a><a class="chip gray" href="#/doc/log">검토 기록</a></div></div>`;
     app.innerHTML = `<div class="split doc-split">
       <aside class="split-left doc-left">
         <div class="seg" id="dseg">${SCREENS.map((s) => `<a href="${docHref(s.id)}" data-seg="${s.id}">${esc(s.short)}</a>`).join("")}</div>
@@ -245,7 +227,6 @@
         ${bullets(["화면 캡처의 보라색 번호 = 아래 명세의 요소 번호", "화면설계서(초록): 무엇이 보이고, 어떻게 움직이나", "기능명세서(보라): 언제, 무엇을 처리하고, 결과는 어떤가"])}
         <div class="btns"><a class="btn" href="#/flow">전체 흐름 보기</a><button class="btn" type="button" data-print>문서 인쇄</button></div>
         <div class="chips"><span class="chip">화면 4개</span><span class="chip purple">요소 ${ELS}개</span><span class="chip purple">기능 ${FNS}개</span></div>
-        ${guideDoc()}
         <nav class="card finder" aria-label="화면 번호로 찾기"><h2>화면 번호로 찾기</h2>${finder}</nav>
         ${SCREENS.map(screenDoc).join("")}
         ${commonDoc()}
