@@ -82,8 +82,11 @@ a.chip:hover { filter: brightness(.96); }
 .flow .section > h2 { margin: 0; font-size: 20px; }
 .flow .section > p.muted { margin: 6px 0 20px; }
 .grid { display: grid; gap: 16px; }
-.grid.steps { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-.grid.two { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+/* 핵심 흐름(4칸)과 보조 흐름(3칸 × 2줄)이 항상 같은 가로 폭을 꽉 채우도록 칸 수를 고정 */
+.grid.steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.grid.two { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 1020px) { .grid.steps, .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .grid.steps, .grid.two { grid-template-columns: minmax(0, 1fr); } }
 .step { padding: 20px; display: flex; flex-direction: column; gap: 12px; border-radius: 16px; }
 .step-head { display: flex; justify-content: space-between; align-items: center; }
 .step-num { font-size: 13px; font-weight: 800; color: var(--green); letter-spacing: .02em; }
