@@ -216,7 +216,7 @@
 
   const docState = { sc: null, el: null };
   function renderDoc() {
-    const finder = SCREENS.map((s) => `<div class="finder-row"><div class="label">${esc(s.short)}</div><div class="chips"><a class="chip sc-link" href="${docHref(s.id)}">${esc(s.short)} 화면</a>${s.els.map((e) => `<a class="chip purple" href="${docHref(s.id, e.n)}" title="${esc(e.name)}">${e.n}</a>`).join("")}</div></div>`).join("")
+    const finder = SCREENS.map((s) => `<div class="finder-row"><div class="label">${esc(s.short)}</div><div class="chips"><a class="chip sc-link" href="${docHref(s.id)}">${esc(s.short)} 화면</a>${s.els.map((e) => `<a class="chip purple" href="${docHref(s.id, e.n)}"><b>${e.n}</b> ${esc(e.name)}</a>`).join("")}</div></div>`).join("")
       + `<div class="finder-row"><div class="label">목록·기록</div><div class="chips"><a class="chip gray" href="#/doc/idmap">요소·기능 목록</a><a class="chip gray" href="#/doc/log">검토 기록</a></div></div>`;
     app.innerHTML = `<div class="split doc-split">
       <aside class="split-left doc-left">
@@ -229,8 +229,7 @@
         <h1>화면과 명세 펼쳐 읽기</h1>
         ${bullets(["화면 캡처의 보라색 번호 = 아래 설명의 요소 번호", "화면설계서: 무엇이 보이고, 어떻게 움직이나", "기능명세서: 언제, 무엇을 처리하고, 결과는 어떤가"])}
         <div class="btns"><a class="btn" href="#/flow">전체 흐름 보기</a><button class="btn" type="button" data-print>문서 인쇄</button></div>
-        <div class="chips"><span class="chip">화면 4개</span><span class="chip purple">요소 ${ELS}개</span><span class="chip purple">기능 ${FNS}개</span></div>
-        <details class="card finder" aria-label="요소 번호로 찾기"><summary><h2>요소 번호로 찾기</h2><span class="finder-hint">화면·요소 번호를 눌러 바로 이동</span></summary><div class="finder-body">${finder}</div></details>
+        <details class="card finder" aria-label="요소 번호로 찾기"><summary><h2>요소 번호로 찾기</h2><span class="finder-hint">화면 4개 · 요소 ${ELS}개 · 기능 ${FNS}개</span></summary><div class="finder-body">${finder}</div></details>
         ${SCREENS.map(screenDoc).join("")}
         ${commonDoc()}
         ${footer()}
