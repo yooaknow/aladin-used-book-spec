@@ -127,21 +127,25 @@
   const G_ROWS = [["role", "역할"], ["show", "화면에 보이는 것"], ["act", "동작"], ["memo", "디자인 메모"]];
   const F_ROWS = [["when", "실행 조건"], ["rule", "처리 규칙"], ["steps", "처리 순서"], ["ok", "성공하면"], ["fail", "실패하면"]];
 
+  // 원래 기획한 기능: 개발할 내용과 헷갈리지 않게 연한 회색으로 접어 둔다
+  const plannedBox = (items) => (items ? `<details class="planned"><summary>원래 기획한 기능 (참고용)</summary>${list(items)}</details>` : "");
+
   function fnDoc(f) {
     const head = `<div class="fn-name">${esc(f.name)} ${codeTag(f.id)}</div>`;
-    if (f.ref) return `<div class="fn">${head}<p class="ref">여러 요소가 같이 쓰는 기능 · 자세한 규칙은 ${rich(f.ref)}에 적어 둠</p>${f.note ? list(f.note) : ""}</div>`;
+    if (f.ref) return `<div class="fn">${head}<p class="ref">여러 요소가 같이 쓰는 기능 · 자세한 규칙은 ${rich(f.ref)}에 적어 둠</p>${f.note ? list(f.note) : ""}${plannedBox(f.planned)}</div>`;
     const rows = F_ROWS.filter(([k]) => f[k]).map(([k, l]) => {
       const v = k === "steps" ? `<ol class="steps-ol">${f.steps.map((t) => `<li>${rich(t)}</li>`).join("")}</ol>` : list(f[k]);
       return `<dt>${l}</dt><dd>${v}</dd>`;
     }).join("");
     const pol = f.pol ? `<dt>아직 정해야 할 정책</dt><dd class="pols">${f.pol.map((p) => idLink(p, "chip amber")).join("")}</dd>` : "";
-    return `<div class="fn" id="${f.id}">${head}<dl>${rows}${pol}</dl></div>`;
+    return `<div class="fn" id="${f.id}">${head}<dl>${rows}${pol}</dl>${plannedBox(f.planned)}</div>`;
   }
 
   function elDoc(s, e) {
     const tags = [];
     if (e.flowStart) tags.push('<span class="chip pink">흐름 시작</span>');
     if (e.flowStep) tags.push('<span class="chip pink">핵심 흐름</span>');
+    if (e.displayOnly) tags.push('<span class="chip gray">화면만 표시</span>');
     if (e.memo) tags.push('<span class="chip gray">디자인 메모 있음</span>');
     const g = G_ROWS.filter(([k]) => e[k]).map(([k, l]) => {
       const a = k === "memo" ? ' class="annot"' : k === "role" ? ' class="role"' : "";
@@ -152,7 +156,7 @@
       <div class="chips">${e.fns.map((f) => `<span class="chip purple">기능: ${esc(label(f))}</span>`).join("")}${tags.join("")}</div>
       <div class="print-only print-crop">${thumb(s, e.boxes[0], 230, 380)}</div>
       <div class="pair">
-        <section class="spec green"><h4>화면설계서</h4><p class="sub">무엇이 보이고, 어떻게 움직이나</p><dl>${g}</dl></section>
+        <section class="spec green"><h4>화면설계서</h4><p class="sub">무엇이 보이고, 어떻게 움직이나</p><dl>${g}</dl>${plannedBox(e.planned)}</section>
         <section class="spec purple"><h4>기능명세서</h4><p class="sub">언제, 무엇을 처리하고, 결과는 어떤가</p>${e.p.map(fnDoc).join("")}</section>
       </div>
     </article>`;

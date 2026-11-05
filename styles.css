@@ -146,6 +146,14 @@ a.chip:hover { filter: brightness(.96); }
 .spec dd.role { font-size: 14.5px; font-weight: 600; color: var(--text); }
 .spec dt.annot { color: #b5155c; }
 .spec dd.annot { background: #fff; border-left: 3px solid var(--pink); border-radius: 0 8px 8px 0; padding: 7px 10px; }
+/* 원래 기획한 기능(참고용): 개발 내용과 헷갈리지 않게 연한 회색으로 접어 둠 */
+details.planned { margin-top: 12px; padding: 6px 10px; border: 1px dashed #d3d8d5; border-radius: 8px; background: rgba(255, 255, 255, .55); color: #9aa29e; font-size: 13px; }
+details.planned summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: #9aa29e; list-style: none; }
+details.planned summary::-webkit-details-marker { display: none; }
+details.planned summary::before { content: "▸"; display: inline-block; width: 14px; }
+details.planned[open] summary::before { content: "▾"; }
+details.planned .dots { margin-top: 4px; color: #9aa29e; }
+details.planned a.rid { color: inherit; text-decoration-color: currentColor; }
 .fn { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--purple-line); }
 .fn:first-of-type { margin-top: 4px; padding-top: 0; border-top: 0; }
 .fn-name { font-weight: 800; color: var(--purple); font-size: 14px; }
