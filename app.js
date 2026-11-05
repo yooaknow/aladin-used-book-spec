@@ -386,8 +386,6 @@
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px"><h3 style="margin:0">누를 수 있는 영역</h3><label class="toggle"><input type="checkbox" id="hotToggle"${state.showHot ? " checked" : ""}>영역 표시</label></div>
             <div class="actions">${actionList}</div>
             ${notes.length ? `<div class="note" style="margin-top:10px">${bullets(notes)}</div>` : ""}
-            <h3 style="margin-top:16px">요소 위치 보기</h3>
-            <div class="chips">${s.els.map((e) => `<a class="chip purple" data-focus="${e.n}" title="${esc(e.name)}">${e.n}</a>`).join("")}</div>
           </section>
           <section class="card panel">
             <h3>동작 기록</h3>
@@ -573,8 +571,6 @@
     if (t.id === "dim") { openSheet(false); toast("적용 없이 닫힘"); log("바깥 어두운 부분 → 필터 창 닫힘 (적용 안 함)"); return; }
     const p = t.closest("[data-pulse]");
     if (p) { pulse(p.dataset.pulse); return; }
-    const f = t.closest("[data-focus]");
-    if (f) { focusEl(f.dataset.focus); return; }
     if (!t.closest(".tip")) closeTips();
   });
   app.addEventListener("change", (ev) => {
