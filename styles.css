@@ -77,11 +77,8 @@ a.chip:hover { filter: brightness(.96); }
 
 /* ---------- flow view (간격은 8px 단위: 8·12·16·20·24·32·48) ---------- */
 .flow { padding-top: 32px; }
-.flow-head h1 { margin: 4px 0 12px; font-size: clamp(24px, 2.6vw, 30px); }
-.flow-head .bullets { margin: 0; }
-.flow-head .btns { margin: 20px 0 0; }
-.flow-head .chips { margin-top: 16px; }
 .flow .section { margin-top: 48px; }
+.flow .section:first-child { margin-top: 0; }
 .flow .section > h2 { margin: 0; font-size: 20px; }
 .flow .section > p.muted { margin: 6px 0 20px; }
 .grid { display: grid; gap: 16px; }

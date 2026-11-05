@@ -84,16 +84,9 @@
         <div class="chips">${m.chips.map((c) => idLink(c, "chip purple")).join("")}${m.tag ? `<span class="chip amber">${m.tag}</span>` : ""}<a class="chip line" href="${m.demo}">시연하기</a></div></article>`).join("");
 
     app.innerHTML = `<div class="wrap flow">
-      <div class="flow-head">
-        <p class="eyebrow">전체 흐름 보기</p>
-        <h1>중고책 구매 흐름 한눈에 보기</h1>
-        <div class="btns"><a class="btn" href="#/doc">명세 전체 읽기</a><a class="btn primary" href="${demoHref("hom", "09")}">시연 이어보기</a></div>
-        <div class="chips"><span class="chip">화면 4개</span><span class="chip purple">요소 ${ELS}개</span><span class="chip purple">기능 ${FNS}개</span></div>
-      </div>
-
       <section class="section">
         <h2>중고책 구매 핵심 흐름</h2>
-        <p class="muted">‘온라인 중고’의 &lt;소년이 온다&gt;를 사는 흐름 (피그마에 연결된 순서 기준)</p>
+        <p class="muted">‘온라인 중고’의 &lt;소년이 온다&gt;를 사는 흐름</p>
         <div class="grid steps">${steps}</div>
       </section>
 
