@@ -68,11 +68,11 @@
     }).join("");
 
     const sides = [
-      { t: "담기 완료 알림 → 장바구니", path: "상품 상세 ‘장바구니’ → 완료 알림의 ‘장바구니 보기’ → 장바구니", d: ["담기 완료 알림의 링크로 장바구니로 이동", "알림은 화면 아래 구매 바 위에 잠깐 뜸"], chips: ["SC-DET-01/06"], demo: demoHref("det", "06") },
+      { t: "담기 완료 알림 → 장바구니", path: "상품 상세 ‘장바구니’ → 완료 알림의 ‘장바구니 보기’ → [장바구니] 페이지", d: ["담기 완료 알림의 링크로 [장바구니] 페이지로 이동", "알림은 화면 아래 구매 바 위에 잠깐 뜸"], chips: ["SC-DET-01/06"], demo: demoHref("det", "06") },
       { t: "필터 적용", path: "가격 비교 ‘저가격순’·‘모든 품질 등급’ → 아래에서 필터 창 → ‘필터 적용하기’", d: ["‘정렬 순서’ 탭·‘반값택배만 보기’·‘필터 적용하기’까지 동작", "바깥 어두운 부분 누름 → 닫힘"], chips: ["SC-CMP-01/02"], demo: demoHref("cmp", "02") },
       { t: "보관", path: "가격 비교 보관 아이콘 → 눌린 모양 + 보관 완료 알림", d: ["보관 완료 알림은 잠시 뒤 자동으로 닫힘"], chips: ["SC-CMP-01/04"], demo: demoHref("cmp", "04") },
       { t: "Thanks to 안내·공감", path: "상품 상세 리뷰 ⓘ → Thanks to 설명 말풍선 / 공감 → 눌린 모양", d: ["말풍선은 아이콘 바로 위에 뜸", "말풍선 바깥 누름 → 닫힘"], chips: ["SC-DET-01/05"], demo: demoHref("det", "05") },
-      { t: "뒤로 가기", path: "장바구니 → 상품 상세 → 가격 비교 → 홈", d: ["화면 위 뒤로 아이콘으로 이전 화면으로"], chips: [], demo: demoHref("crt") },
+      { t: "뒤로 가기", path: "[장바구니] → [상품 상세] → [가격 비교] → [홈] 페이지", d: ["화면 위 뒤로 아이콘 누름 → 이전 페이지로 이동"], chips: [], demo: demoHref("crt") },
       { t: "금액 연결", path: "5,400원 + 일리아스 18,000원 + 배송비 3,500원 = 26,900원", d: ["가격 비교·상세·장바구니의 판매자·상태·금액이 모두 같음 (우나야하 · 중 · 64%)"], chips: ["SC-CRT-01/02"], demo: demoHref("crt", "02") }
     ].map((m) => `<article class="card mini"><h3>${esc(m.t)}</h3><div class="path">${esc(m.path)}</div>${bullets(m.d)}
         <div class="chips">${m.chips.map((c) => idLink(c, "chip purple")).join("")}${m.tag ? `<span class="chip amber">${m.tag}</span>` : ""}<a class="chip line" href="${m.demo}">시연하기</a></div></article>`).join("");
@@ -293,7 +293,7 @@
   let demoTimers = [];
   let barIO = null;
 
-  const actText = (a) => ({ go: `→ ${byKey[a.to]?.short ?? ""}`, sheet: "필터 창", cabinet: "보관 완료 알림", toggle: "눌린 모양", tooltip: "Thanks to 설명 말풍선", cartSnack: "담기 완료 알림", noop: "동작하지 않음" }[a.act]);
+  const actText = (a) => ({ go: `→ [${byKey[a.to]?.short ?? ""}] 페이지로 이동`, sheet: "필터 창", cabinet: "보관 완료 알림", toggle: "눌린 모양", tooltip: "Thanks to 설명 말풍선", cartSnack: "담기 완료 알림", noop: "동작하지 않음" }[a.act]);
   const hotHtml = (a, attr = "data-hot") => `<button type="button" class="hot${state.pressed[a.key] ? " pressed" : ""}" ${attr}="${a.id}" style="left:${a.r[0]}px;top:${a.r[1]}px;width:${a.r[2]}px;height:${a.r[3]}px" aria-label="${esc(a.label)}"></button>`;
 
   function renderDemo(key, hl) {
@@ -459,7 +459,7 @@
     closeTips();
     switch (a.act) {
       case "go":
-        log(`${a.label} → ${byKey[a.to].short}`);
+        log(`${a.label} → [${byKey[a.to].short}] 페이지로 이동`);
         location.hash = demoHref(a.to);
         break;
       case "toggle": {
@@ -543,7 +543,7 @@
     if (hot) { doAction(hot.dataset.hot, hot); return; }
     const sh = t.closest("[data-sheet]");
     if (sh) { sheetAction(sh.dataset.sheet); return; }
-    if (t.closest("[data-snack]")) { log("알림의 ‘장바구니 보기’ → 장바구니"); location.hash = demoHref("crt"); return; }
+    if (t.closest("[data-snack]")) { log("알림의 ‘장바구니 보기’ → [장바구니] 페이지로 이동"); location.hash = demoHref("crt"); return; }
     if (t.id === "dim") { openSheet(false); toast("적용 없이 닫힘"); log("바깥 어두운 부분 → 필터 창 닫힘 (적용 안 함)"); return; }
     const p = t.closest("[data-pulse]");
     if (p) { pulse(p.dataset.pulse); return; }
