@@ -231,9 +231,8 @@
       <div class="split-right" id="dright">
         <p class="eyebrow">문서 보기</p>
         <h1>화면설계서, 기능명세서</h1>
-        ${bullets(["화면 캡처의 보라색 번호 = 아래 설명의 요소 번호", "화면설계서: 무엇이 보이고, 어떻게 움직이나", "기능명세서: 언제, 무엇을 처리하고, 결과는 어떤가"])}
         <div class="doc-tools">
-          <label class="only-working-check"><input type="checkbox" data-only-working${onlyWorking ? " checked" : ""}><span>동작하는 것만 보기</span><small>${ELS}개 중 ${WORKING_COUNT}개</small></label>
+          <label class="only-working-check"><input type="checkbox" data-only-working${onlyWorking ? " checked" : ""}><span>구현할 기능만 보기</span><small>${ELS}개 중 ${WORKING_COUNT}개</small></label>
         </div>
         <details class="card finder" aria-label="요소 번호로 찾기"><summary><h2>요소 번호로 찾기</h2><span class="finder-hint">화면 4개 · 요소 ${ELS}개 · 기능 ${FNS}개</span></summary><div class="finder-body">${finder}</div></details>
         ${SCREENS.map(screenDoc).join("")}
