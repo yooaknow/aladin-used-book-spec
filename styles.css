@@ -72,31 +72,34 @@ a.chip:hover { filter: brightness(.96); }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
 .note { font-size: 13px; color: var(--muted); }
 
-/* ---------- flow view ---------- */
-.strip { margin: 14px 0 16px; padding: 11px 16px; border-radius: var(--radius); background: var(--green-bg); border: 1px solid var(--green-line); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-weight: 700; font-size: 14px; }
-.strip .arrow { color: var(--muted); font-weight: 400; }
-.strip .soft { border: 1px dashed #9cc2ad; border-radius: 7px; padding: 0 7px; background: #fff; }
-.grid { display: grid; gap: 14px; }
+/* ---------- flow view (간격은 8px 단위: 8·12·16·20·24·32·48) ---------- */
+.flow { padding-top: 32px; }
+.flow-head h1 { margin: 4px 0 12px; font-size: clamp(24px, 2.6vw, 30px); }
+.flow-head .bullets { margin: 0; }
+.flow-head .btns { margin: 20px 0 0; }
+.flow-head .chips { margin-top: 16px; }
+.flow .section { margin-top: 48px; }
+.flow .section > h2 { margin: 0; font-size: 20px; }
+.flow .section > p.muted { margin: 6px 0 20px; }
+.grid { display: grid; gap: 16px; }
 .grid.steps { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
 .grid.two { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-.step { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-.step-head { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 13px; font-weight: 600; }
-.step h3 { font-size: 16px; }
-.step p { margin: 0; color: var(--muted); font-size: 14px; }
-.step .btns { margin: 0; gap: 6px; }
-.step .next { margin-top: auto; padding-top: 9px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
-.thumb { position: relative; overflow: hidden; border-radius: 10px; border: 1px solid var(--line); background: #fff; width: 100%; }
+.step { padding: 20px; display: flex; flex-direction: column; gap: 12px; border-radius: 16px; }
+.step-head { display: flex; justify-content: space-between; align-items: center; }
+.step-num { font-size: 13px; font-weight: 800; color: var(--green); letter-spacing: .02em; }
+.step h3 { font-size: 17px; }
+.step p { margin: 0; color: var(--muted); font-size: 14px; min-height: 3.2em; }
+.step .btns { margin: 0; gap: 8px; }
+.step .btns .btn { flex: 1; }
+.step .next { margin-top: auto; min-height: calc(3.2em + 12px); padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.thumb { position: relative; overflow: hidden; border-radius: 12px; border: 1px solid var(--line); background: #fff; width: 100%; }
 .thumb img { position: absolute; left: 50%; transform: translateX(-50%); }
 .thumb-box { position: absolute; border: 2.5px solid var(--purple); border-radius: 9px; box-shadow: 0 0 0 9999px rgba(255, 255, 255, .45); }
-.mini { padding: 14px 16px; }
-.mini h3 { font-size: 15px; margin-bottom: 2px; }
+.mini { padding: 20px; display: flex; flex-direction: column; gap: 8px; border-radius: 16px; }
+.mini h3 { font-size: 16px; margin: 0; }
 .mini p { margin: 0; font-size: 13.5px; color: var(--muted); }
-.mini .path { margin: 4px 0; font-weight: 700; font-size: 13px; }
-.mini .chips { margin-top: 8px; }
-.screen-card { padding: 16px; display: grid; grid-template-columns: 120px 1fr; gap: 14px; align-items: start; }
-.screen-card .thumb { height: 180px; }
-.screen-card p { margin: 4px 0 8px; color: var(--muted); font-size: 14px; }
-.screen-card .btns { margin: 8px 0 0; gap: 6px; }
+.mini .path { margin: 0; font-weight: 700; font-size: 13.5px; }
+.mini .chips { margin-top: auto; padding-top: 8px; }
 
 /* ---------- doc view ---------- */
 /* 요소 번호로 찾기: 처음엔 접혀 있고 눌러서 펼침 */
@@ -318,7 +321,7 @@ a.rid:hover { text-decoration-style: solid; text-decoration-color: var(--purple)
 /* ---------- 개조식 목록 ---------- */
 .bullets { margin: 4px 0 0; padding-left: 18px; color: var(--muted); font-size: 14px; max-width: 860px; }
 .bullets li { margin: 1px 0; }
-.mini .bullets { font-size: 13px; margin: 2px 0 0; }
+.mini .bullets { font-size: 13px; margin: 0; }
 .note .bullets { margin: 0; font-size: 12.5px; }
 
 /* ---------- 알라딘 로고 ---------- */
@@ -368,8 +371,6 @@ a.rid:hover { text-decoration-style: solid; text-decoration-color: var(--purple)
   .screen, .common { padding: 14px; }
   .pair { grid-template-columns: 1fr; }
   .finder-row { grid-template-columns: 1fr; }
-  .screen-card { grid-template-columns: 96px 1fr; }
-  .screen-card .thumb { height: 150px; }
   .el-head { flex-direction: column; }
   .log > li { grid-template-columns: 1fr; gap: 2px; }
   .phone { padding: 8px; width: calc(375px * var(--s) + 16px); }

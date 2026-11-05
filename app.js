@@ -45,10 +45,16 @@
   const footer = () => `<div class="foot" aria-hidden="true"></div>`;
   const isSplit = () => window.innerWidth > 1020;
 
-  function thumb(s, b, w = 210, maxH = 170, hl = true) {
+  // fixed: 높이를 maxH로 고정하고 강조 영역을 가운데에 둔다 (카드끼리 높이를 맞출 때)
+  function thumb(s, b, w = 210, maxH = 170, hl = true, fixed = false) {
     const k = w / s.w, pad = 18;
-    const top = Math.max(0, b[1] - pad);
-    const hgt = Math.round(Math.min((b[3] + pad * 2) * k, maxH));
+    let top = Math.max(0, b[1] - pad);
+    let hgt = Math.round(Math.min((b[3] + pad * 2) * k, maxH));
+    if (fixed) {
+      hgt = maxH;
+      const viewH = maxH / k;
+      if (b[3] + pad * 2 <= viewH) top = Math.max(0, Math.min(s.h - viewH, b[1] + b[3] / 2 - viewH / 2));
+    }
     const box = hl ? `<span class="thumb-box" style="left:${b[0] * k}px;top:${(b[1] - top) * k}px;width:${b[2] * k}px;height:${b[3] * k}px"></span>` : "";
     return `<div class="thumb" style="height:${hgt}px"><div style="position:relative;width:${w}px;height:${hgt}px;margin:0 auto;overflow:hidden"><img src="${s.img}" alt="" style="left:0;top:${-top * k}px;width:${w}px;height:${s.h * k}px;transform:none">${box}</div></div>`;
   }
@@ -58,9 +64,9 @@
     const steps = FLOW.map((f, i) => {
       const s = byId[f.sc], el = findEl(f.sc, f.el);
       return `<article class="card step">
-        <div class="step-head"><span>${String(i + 1).padStart(2, "0")}</span><span class="chip purple">${elTag(f.sc, f.el)}</span></div>
+        <div class="step-head"><span class="step-num">STEP ${String(i + 1).padStart(2, "0")}</span><span class="chip purple">${elTag(f.sc, f.el)}</span></div>
         <h3>${esc(f.title)}</h3>
-        ${thumb(s, el.boxes[0])}
+        ${thumb(s, el.boxes[0], 210, 170, true, true)}
         <p>${esc(f.desc)}</p>
         <div class="btns"><a class="btn small" href="${docHref(f.sc, f.el)}">문서 보기</a><a class="btn small primary" href="${demoHref(s.key, f.el)}">시연하기</a></div>
         <div class="next">${esc(f.next)}</div>
@@ -77,17 +83,18 @@
     ].map((m) => `<article class="card mini"><h3>${esc(m.t)}</h3><div class="path">${esc(m.path)}</div>${bullets(m.d)}
         <div class="chips">${m.chips.map((c) => idLink(c, "chip purple")).join("")}${m.tag ? `<span class="chip amber">${m.tag}</span>` : ""}<a class="chip line" href="${m.demo}">시연하기</a></div></article>`).join("");
 
-    app.innerHTML = `<div class="wrap">
-      <p class="eyebrow">전체 흐름 보기</p>
-      <h1>중고책 구매 흐름 한눈에 보기</h1>
-      ${bullets(["홈 ‘온라인 중고’ → 가격 비교 → 상품 상세 → 장바구니 순서", "단계마다 ‘문서 보기’와 ‘시연하기’로 바로 이동"])}
-      <div class="btns"><a class="btn" href="#/doc">명세 전체 읽기</a><a class="btn primary" href="${demoHref("hom", "10")}">시연 이어보기</a></div>
-      <div class="chips"><span class="chip">화면 4개</span><span class="chip purple">요소 ${ELS}개</span><span class="chip purple">기능 ${FNS}개</span></div>
+    app.innerHTML = `<div class="wrap flow">
+      <div class="flow-head">
+        <p class="eyebrow">전체 흐름 보기</p>
+        <h1>중고책 구매 흐름 한눈에 보기</h1>
+        ${bullets(["홈 ‘온라인 중고’ → 가격 비교 → 상품 상세 → 장바구니 순서", "단계마다 ‘문서 보기’와 ‘시연하기’로 바로 이동"])}
+        <div class="btns"><a class="btn" href="#/doc">명세 전체 읽기</a><a class="btn primary" href="${demoHref("hom", "10")}">시연 이어보기</a></div>
+        <div class="chips"><span class="chip">화면 4개</span><span class="chip purple">요소 ${ELS}개</span><span class="chip purple">기능 ${FNS}개</span></div>
+      </div>
 
       <section class="section">
         <h2>중고책 구매 핵심 흐름</h2>
         <p class="muted">‘온라인 중고’의 &lt;소년이 온다&gt;를 사는 흐름 (피그마에 연결된 순서 기준)</p>
-        <div class="strip"><span>홈 · 온라인 중고</span><span class="arrow">→</span><span>가격 비교 · 판매 상품 고르기</span><span class="arrow">→</span><span>상품 상세 · 장바구니 담기</span><span class="arrow">→</span><span class="soft">완료 알림 ‘장바구니 보기’</span><span class="arrow">→</span><span>장바구니 · 주문하기</span></div>
         <div class="grid steps">${steps}</div>
       </section>
 
