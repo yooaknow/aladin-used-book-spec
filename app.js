@@ -66,7 +66,7 @@
       <h1>중고책 구매 흐름 한눈에 보기</h1>
       ${bullets(["홈 온라인 중고 → 가격 비교 → 상품 상세 → 장바구니 순서", "단계별 문서·시연을 같은 화면·요소 번호로 연결"])}
       <div class="btns"><a class="btn" href="#/doc">명세 전체 읽기</a><a class="btn primary" href="${demoHref("hom", "10")}">시연 이어보기</a></div>
-      <div class="chips"><span class="chip">화면 4개</span><span class="chip purple">요소 설명 ${ELS}개</span><span class="chip purple">기능 ${FNS}개</span><span class="note">화면: 최종 Redesign 캡처 · 시연: Figma 프로토타입 연결 기준</span></div>
+      <div class="chips"><span class="chip">화면 4개</span><span class="chip purple">요소 설명 ${ELS}개</span><span class="chip purple">기능 ${FNS}개</span></div>
 
       <section class="section">
         <h2>중고책 구매 핵심 흐름</h2>
