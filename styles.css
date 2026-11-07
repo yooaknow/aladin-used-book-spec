@@ -303,7 +303,7 @@ a.rid:hover { text-decoration-style: solid; text-decoration-color: var(--purple)
 .focus-frame { position: absolute; border: 3px solid var(--purple); border-radius: 10px; pointer-events: none; animation: fadeout 3.5s forwards; }
 .focus-frame span { position: absolute; left: -3px; top: -28px; background: var(--purple); color: #fff; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 8px; white-space: nowrap; }
 @keyframes fadeout { 0%, 75% { opacity: 1; } 100% { opacity: 0; } }
-.tip { position: absolute; width: 137px; height: 40px; pointer-events: none; filter: drop-shadow(0 4px 8px rgba(0,0,0,.15)); }
+.canvas > .tip { position: absolute; width: 137px; height: 40px; pointer-events: none; filter: drop-shadow(0 4px 8px rgba(0,0,0,.15)); }
 .dim { position: absolute; inset: 0; background: rgba(0, 0, 0, .5); opacity: 0; pointer-events: none; transition: opacity .2s; }
 .dim.on { opacity: 1; pointer-events: auto; }
 .sheet { position: absolute; left: 0; bottom: 0; width: calc(375px * var(--s)); height: calc(450px * var(--s)); transform: translateY(105%); transition: transform .25s ease; }
